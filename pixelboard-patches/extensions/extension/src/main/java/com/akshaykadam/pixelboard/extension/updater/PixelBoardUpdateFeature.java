@@ -354,7 +354,7 @@ public final class PixelBoardUpdateFeature implements GboardPatchesSettingsContr
                 true));
         infoRows.add(new GboardPatchesSettingsContract.DetailRow(
                 "Base Gboard",
-                "v18.5.3 (Release)",
+                resolveBaseGboardVersion(context),
                 true));
         infoRows.add(new GboardPatchesSettingsContract.DetailRow(
                 "Package Name",
@@ -397,7 +397,32 @@ public final class PixelBoardUpdateFeature implements GboardPatchesSettingsContr
             } catch (PackageManager.NameNotFoundException ignored) {
             }
         }
-        return "1.3.3";
+        return "2.0.6";
+    }
+
+    private static String resolveBaseGboardVersion(Context context) {
+        if (context != null) {
+            try {
+                PackageInfo packageInfo = context.getPackageManager()
+                        .getPackageInfo(context.getPackageName(), 0);
+                if (packageInfo != null && packageInfo.versionName != null) {
+                    String clean = packageInfo.versionName.trim();
+                    int dash = clean.indexOf('-');
+                    if (dash > 0) {
+                        clean = clean.substring(0, dash);
+                    }
+                    String[] parts = clean.split("\\.");
+                    if (parts.length >= 3) {
+                        clean = parts[0] + "." + parts[1] + "." + parts[2];
+                    }
+                    if (!clean.isEmpty()) {
+                        return "v" + clean + " (Release)";
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return "v18.4.1 (Release)";
     }
 
     private static String formatBytes(long bytes) {
@@ -426,11 +451,10 @@ public final class PixelBoardUpdateFeature implements GboardPatchesSettingsContr
     }
 
     private static String getDefaultChangelog() {
-        return "* **In-App Updates**: Dedicated PixelBoard updates section directly in Gboard settings with GitHub release checks, formatted changelogs, and direct APK download\n"
-                + "* **Extended Clipboard History**: Save copied text and images for 1 hour, 24 hours, 7 days, 30 days, or permanently (Never)\n"
-                + "* **Upgraded Base to Gboard v18.5.3**: Rebased on Google's latest stable release with smoother typing performance\n"
-                + "* **TalkBack Accessibility Overhaul**: Full screen reader optimization with clear labels, proper button roles, and audio cues\n"
-                + "* **Arabic Language Support**: Added complete native Arabic (العربية) translation across all settings and AI features\n"
-                + "* **Crash Fixes & Stability**: Resolved clipboard slider crashes, fixed settings layout issues, and improved battery efficiency";
+        return "* **Extended Clipboard History**: Discrete 5-step retention slider (1 hour, 24 hours default, 7 days, 30 days, Never) with up to 100 unpinned recent clips and localized retention tips across 83 languages\n"
+                + "* **Google Sans Flex & Undo Controls**: New toggles in Advanced Settings for Google Sans Flex keycap typography and proactive suggestion-strip Undo chips, plus fixed Frequently Used Emojis tab persistence\n"
+                + "* **Rambler Voice Dictation Fixes**: Verbatim transcript preservation, mid-sentence edit protection, 1.5s screen-rotation session grace, strict language enforcement, and dedicated minimize key placement\n"
+                + "* **Symbol Key Label Sanitizer**: Removes backslash and theme attribute artifacts from symbol and shifted key labels at runtime\n"
+                + "* **AI Writing Tools & Flag Engine**: Direct Boot safe initialization, Writing Tools V1 stability, updated decoder/autocorrect/Emojify/Fast-Access flags, and full RTL layout support";
     }
 }

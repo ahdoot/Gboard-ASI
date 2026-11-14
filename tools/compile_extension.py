@@ -31,6 +31,6 @@ if res.stderr:
     print("STDERR:", res.stderr)
 
 if res.returncode == 0:
-    print("Compilation SUCCESSFUL! 64 files compiled.")
+    print(f"Compilation SUCCESSFUL! {len(sources)} files compiled.")
 else:
     print("Compilation FAILED!")

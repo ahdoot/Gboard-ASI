@@ -9,6 +9,8 @@ package com.akshaykadam.pixelboard.extension.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.preference.PreferenceManager;
 import com.akshaykadam.pixelboard.extension.R;
 import com.akshaykadam.pixelboard.extension.advancedvoice.GboardAdvancedVoiceSettings;
 import com.akshaykadam.pixelboard.extension.writingtools.GboardAiWritingToolsDeviceSupport;
@@ -21,7 +23,7 @@ import java.util.List;
 public final class GboardAdvancedSettingsFeature implements GboardPatchesSettingsContract.Feature {
 
     public static final String PREF_KEY_FREQUENT_EMOJIS = "frequently_used_emojis_enabled";
-    public static final String GBOARD_PREF_KEY_FREQUENT_EMOJI_TAB = "enable_frequent_emoji_recent_tab";
+    public static final String GBOARD_PREF_KEY_FREQUENT_EMOJI_TAB = "enable_frequent_emoji_recent_Tab";
 
     private final Context context;
 
@@ -76,6 +78,13 @@ public final class GboardAdvancedSettingsFeature implements GboardPatchesSetting
         }
         if (patchesPrefs != null) {
             GboardRoundedKeysSettings.ensureDefaults(ctx, patchesPrefs);
+            GboardGoogleSansSettings.ensureDefaults(ctx, patchesPrefs);
+            GboardUndoSettings.ensureDefaults(ctx, patchesPrefs);
+            if (!patchesPrefs.contains(GboardEmojiSettings.PREF_KEY_FREQUENT_EMOJIS_ENABLED)
+                    && patchesPrefs.contains(PREF_KEY_FREQUENT_EMOJIS)) {
+                GboardEmojiSettings.writeFrequentEmojisEnabled(
+                        patchesPrefs, patchesPrefs.getBoolean(PREF_KEY_FREQUENT_EMOJIS, false));
+            }
         }
 
         boolean aiWritingToolsEnabled = writingPrefs == null
@@ -86,8 +95,12 @@ public final class GboardAdvancedSettingsFeature implements GboardPatchesSetting
                 || GboardAdvancedVoiceSettings.readEnabled(voicePrefs);
         boolean roundedKeysEnabled = patchesPrefs == null
                 || GboardRoundedKeysSettings.readEnabled(patchesPrefs);
+        boolean googleSansEnabled = patchesPrefs == null
+                || GboardGoogleSansSettings.readEnabled(patchesPrefs);
+        boolean undoButtonEnabled = patchesPrefs == null
+                || GboardUndoSettings.readEnabled(patchesPrefs);
         boolean frequentEmojisEnabled = patchesPrefs != null
-                && patchesPrefs.getBoolean(PREF_KEY_FREQUENT_EMOJIS, false);
+                && GboardEmojiSettings.readFrequentEmojisEnabled(patchesPrefs);
 
         List<GboardPatchesSettingsContract.Row> rows = new ArrayList<>();
 
@@ -146,22 +159,48 @@ public final class GboardAdvancedSettingsFeature implements GboardPatchesSetting
                     }
                 }));
 
-        // 5. Frequently used emojis
+        // 5. Google Sans Flex typography
         rows.add(new GboardPatchesSettingsContract.ToggleRow(
-                "Frequently used emojis",
-                "Show frequently used emojis instead of recently used emojis in the emoji drawer",
+                GboardSettingsText.get(ctx, R.string.gboard_patches_google_sans_title),
+                GboardSettingsText.get(ctx, R.string.gboard_patches_google_sans_summary),
+                true,
+                googleSansEnabled,
+                value -> {
+                    if (patchesPrefs != null) {
+                        GboardGoogleSansSettings.writeEnabled(patchesPrefs, value);
+                        if (host != null) {
+                            GboardPatchesSettingsContract.refresh(host);
+                        }
+                    }
+                }));
+
+        // 6. Undo button
+        rows.add(new GboardPatchesSettingsContract.ToggleRow(
+                GboardSettingsText.get(ctx, R.string.gboard_patches_undo_button_title),
+                GboardSettingsText.get(ctx, R.string.gboard_patches_undo_button_summary),
+                true,
+                undoButtonEnabled,
+                value -> {
+                    if (patchesPrefs != null) {
+                        GboardUndoSettings.writeEnabled(patchesPrefs, value);
+                        if (host != null) {
+                            GboardPatchesSettingsContract.refresh(host);
+                        }
+                    }
+                }));
+
+        // 7. Frequently used emojis
+        rows.add(new GboardPatchesSettingsContract.ToggleRow(
+                GboardSettingsText.get(ctx, R.string.gboard_patches_frequently_used_emojis_title),
+                GboardSettingsText.get(ctx, R.string.gboard_patches_frequently_used_emojis_summary),
                 true,
                 frequentEmojisEnabled,
                 value -> {
                     if (patchesPrefs != null) {
+                        GboardEmojiSettings.writeFrequentEmojisEnabled(patchesPrefs, value);
                         patchesPrefs.edit().putBoolean(PREF_KEY_FREQUENT_EMOJIS, value).apply();
                     }
-                    try {
-                        SharedPreferences gboardPrefs = ctx.getSharedPreferences(
-                                ctx.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-                        gboardPrefs.edit().putBoolean(GBOARD_PREF_KEY_FREQUENT_EMOJI_TAB, value).apply();
-                    } catch (Throwable ignored) {
-                    }
+                    syncFrequentEmojiPrefToGboard(ctx, value);
                     if (host != null) {
                         GboardPatchesSettingsContract.refresh(host);
                     }
@@ -238,5 +277,30 @@ public final class GboardAdvancedSettingsFeature implements GboardPatchesSetting
                 sections,
                 GboardPatchesSettingsContract.RefreshPolicy.none(),
                 GboardPatchesSettingsContract.PanelStyle.FLAT);
+    }
+
+    private static void syncFrequentEmojiPrefToGboard(Context ctx, boolean enabled) {
+        if (ctx == null) {
+            return;
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !ctx.isDeviceProtectedStorage()) {
+                Context dpsContext = ctx.createDeviceProtectedStorageContext();
+                if (dpsContext != null) {
+                    SharedPreferences dpsPrefs = PreferenceManager.getDefaultSharedPreferences(dpsContext);
+                    if (dpsPrefs != null) {
+                        dpsPrefs.edit().putBoolean(GBOARD_PREF_KEY_FREQUENT_EMOJI_TAB, enabled).apply();
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        try {
+            SharedPreferences gboardPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            if (gboardPrefs != null) {
+                gboardPrefs.edit().putBoolean(GBOARD_PREF_KEY_FREQUENT_EMOJI_TAB, enabled).apply();
+            }
+        } catch (Throwable ignored) {
+        }
     }
 }

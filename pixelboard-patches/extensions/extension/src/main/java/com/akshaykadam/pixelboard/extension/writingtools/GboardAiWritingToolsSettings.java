@@ -10,6 +10,8 @@ public final class GboardAiWritingToolsSettings {
             "pref_ai_writing_tools_all_keyboards_enabled";
     public static final String PREF_KEY_BACKEND_TYPE =
             "pref_ai_writing_tools_backend_type";
+    public static final String PREF_KEY_BACKEND_RESET_MIGRATED =
+            "pref_backend_force_server_v1";
     public static final String PREF_KEY_V2_ENABLED =
             "pref_ai_writing_tools_v2_enabled";
     public static final String BACKEND_GBOARD_SERVER = "GBOARD_SERVER";
@@ -30,6 +32,19 @@ public final class GboardAiWritingToolsSettings {
         Context lookupContext = applicationContext != null ? applicationContext : context;
         if (lookupContext == null) {
             return null;
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+            try {
+                android.os.UserManager um =
+                        (android.os.UserManager) lookupContext.getSystemService(Context.USER_SERVICE);
+                if (um != null && !um.isUserUnlocked()) {
+                    Context dpsContext = lookupContext.createDeviceProtectedStorageContext();
+                    if (dpsContext != null) {
+                        return dpsContext.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
         }
         return lookupContext.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
     }
@@ -58,17 +73,20 @@ public final class GboardAiWritingToolsSettings {
             editor.putBoolean(PREF_KEY_ALL_KEYBOARDS, DEFAULT_ALL_KEYBOARDS);
             editor.putBoolean("pref_defaults_migrated_v3", true);
         }
-        if (!preferences.contains(PREF_KEY_BACKEND_TYPE)) {
+        if (!preferences.contains(PREF_KEY_BACKEND_TYPE)
+                || !preferences.getBoolean(PREF_KEY_BACKEND_RESET_MIGRATED, false)) {
             if (editor == null) {
                 editor = preferences.edit();
             }
             editor.putString(PREF_KEY_BACKEND_TYPE, DEFAULT_BACKEND_TYPE);
+            editor.putBoolean(PREF_KEY_BACKEND_RESET_MIGRATED, true);
         }
-        if (!preferences.contains(PREF_KEY_V2_ENABLED)) {
+        if (!preferences.getBoolean("pref_v2_force_disabled_v1", false)) {
             if (editor == null) {
                 editor = preferences.edit();
             }
-            editor.putBoolean(PREF_KEY_V2_ENABLED, DEFAULT_V2_ENABLED);
+            editor.putBoolean(PREF_KEY_V2_ENABLED, false);
+            editor.putBoolean("pref_v2_force_disabled_v1", true);
         }
         if (editor != null) {
             editor.apply();
@@ -211,7 +229,7 @@ public final class GboardAiWritingToolsSettings {
             this.featureEnabled = featureEnabled;
             this.allKeyboardsEnabled = featureEnabled && allKeyboardsEnabled;
             this.backendType = sanitizeBackendType(backendType);
-            this.v2Enabled = featureEnabled && v2Enabled;
+            this.v2Enabled = false;
         }
     }
 }

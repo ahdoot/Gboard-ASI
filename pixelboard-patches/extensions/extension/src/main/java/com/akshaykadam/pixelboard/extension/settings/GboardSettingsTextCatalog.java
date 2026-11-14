@@ -135,6 +135,26 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Rounded Keys");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Enable Material 3 Expressive rounded (Belka) key style.");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Frequently used emojis");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Show frequently used emojis instead of recently used emojis in the emoji drawer");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex typography");
+            map.put(R.string.gboard_patches_google_sans_summary, "Enable Google Sans Flex font on keyboard keycaps and Material 3 Expressive styling.");
+            map.put(R.string.gboard_patches_undo_button_title, "Undo button");
+            map.put(R.string.gboard_patches_undo_button_summary, "Show proactive Undo chip in suggestion strip after autocorrection and text edits.");
+            map.put(R.string.gboard_patches_clipboard_history_title, "Clipboard history");
+            map.put(R.string.gboard_patches_clipboard_history_summary, "Manage clipboard retention duration");
+            map.put(R.string.gboard_patches_clipboard_history_header_summary, "Configure how long clipboard items are kept");
+            map.put(R.string.gboard_patches_clipboard_history_error_title, "Clipboard settings unavailable");
+            map.put(R.string.gboard_patches_clipboard_history_error_summary, "Could not load clipboard history preferences");
+            map.put(R.string.gboard_patches_clipboard_history_duration_title, "History retention");
+            map.put(R.string.gboard_patches_clipboard_history_duration_summary, "Choose how long unpinned items are kept");
+            map.put(R.string.gboard_patches_clipboard_history_duration_dialog_title, "Clipboard history duration");
+            map.put(R.string.gboard_patches_clipboard_history_duration_1h, "1 hour");
+            map.put(R.string.gboard_patches_clipboard_history_duration_24h, "24 hours");
+            map.put(R.string.gboard_patches_clipboard_history_duration_7d, "7 days");
+            map.put(R.string.gboard_patches_clipboard_history_duration_30d, "30 days");
+            map.put(R.string.gboard_patches_clipboard_history_duration_never, "Never (Unlimited / Manual deletion only)");
+            map.put(R.string.gboard_patches_clipboard_history_section_behavior, "Retention behavior");
             catalogs.put("en", map);
         }
         {
@@ -245,6 +265,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Teclas redondeadas");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Habilita el estilo de teclas redondeadas Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Emojis de uso frecuente");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Mostrar emojis de uso frecuente en lugar de emojis recientes en el panel de emojis");
+            map.put(R.string.gboard_patches_google_sans_title, "Tipografía Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Habilita la fuente Google Sans Flex en las teclas del teclado y el estilo Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Botón de deshacer");
+            map.put(R.string.gboard_patches_undo_button_summary, "Mostrar el chip Deshacer en la barra de sugerencias después de autocorrecciones y ediciones.");
             catalogs.put("es", map);
         }
         {
@@ -355,6 +381,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Touches arrondies");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Activer le style de touches arrondies Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Émojis fréquemment utilisés");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Afficher les émojis fréquemment utilisés au lieu des récents dans le tiroir d'émojis");
+            map.put(R.string.gboard_patches_google_sans_title, "Typographie Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Activer la police Google Sans Flex sur les touches du clavier et le style Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Bouton annuler");
+            map.put(R.string.gboard_patches_undo_button_summary, "Afficher le bouton Annuler dans la barre de suggestions après autocorrection et modifications.");
             catalogs.put("fr", map);
         }
         {
@@ -465,6 +497,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Abgerundete Tasten");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Material 3 Expressive abgerundeten Tastenstil (Belka) aktivieren.");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Häufig verwendete Emojis");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Häufig verwendete Emojis anstelle von zuletzt verwendeten Emojis im Emoji-Bereich anzeigen");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex Typografie");
+            map.put(R.string.gboard_patches_google_sans_summary, "Google Sans Flex-Schriftart auf Tastenkappen und Material 3 Expressive-Stil aktivieren.");
+            map.put(R.string.gboard_patches_undo_button_title, "Schaltfläche „Rückgängig“");
+            map.put(R.string.gboard_patches_undo_button_summary, "Proaktiven „Rückgängig“-Chip in der Vorschlagsleiste nach Autokorrektur und Textänderungen anzeigen.");
             catalogs.put("de", map);
         }
         {
@@ -575,6 +613,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Tasti arrotondati");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Abilita lo stile dei tasti arrotondati Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Emoji usati di frequente");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Mostra gli emoji usati di frequente anziché quelli recenti nel cassetto delle emoji");
+            map.put(R.string.gboard_patches_google_sans_title, "Tipografia Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Abilita il carattere Google Sans Flex sui tasti della tastiera e lo stile Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Pulsante Annulla");
+            map.put(R.string.gboard_patches_undo_button_summary, "Mostra il chip Annulla nella barra dei suggerimenti dopo la correzione automatica e le modifiche.");
             catalogs.put("it", map);
         }
         {
@@ -685,6 +729,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Teclas arredondadas");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Ative o estilo de teclas arredondadas Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Emojis usados com frequência");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Mostrar emojis usados com frequência em vez de emojis recentes na gaveta de emojis");
+            map.put(R.string.gboard_patches_google_sans_title, "Tipografia Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Ative a fonte Google Sans Flex nas teclas do teclado e o estilo Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Botão de desfazer");
+            map.put(R.string.gboard_patches_undo_button_summary, "Mostrar o chip Desfazer na barra de sugestões após autocorreção e edições de texto.");
             catalogs.put("pt", map);
         }
         {
@@ -795,6 +845,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Скруглённые клавиши");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Включить стиль скруглённых клавиш Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Часто используемые эмодзи");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Показывать часто используемые эмодзи вместо недавних на панели эмодзи");
+            map.put(R.string.gboard_patches_google_sans_title, "Шрифт Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Включить шрифт Google Sans Flex на клавишах клавиатуры и стиль Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Кнопка «Отменить»");
+            map.put(R.string.gboard_patches_undo_button_summary, "Показывать значок отмены в строке подсказок после автоисправления и редактирования текста.");
             catalogs.put("ru", map);
         }
         {
@@ -905,6 +961,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "राउंडेड कीज़ (Rounded Keys)");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "मटीरियल 3 एक्सप्रेसिव राउंडेड (Belka) कुंजी शैली सक्षम करें।");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "अक्सर उपयोग किए जाने वाले इमोजी");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "इमोजी ड्रॉअर में हाल ही में उपयोग किए गए इमोजी के बजाय अक्सर उपयोग किए जाने वाले इमोजी दिखाएं");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex टाइपोग्राफी");
+            map.put(R.string.gboard_patches_google_sans_summary, "कीबोर्ड कीकैप्स पर Google Sans Flex फ़ॉन्ट और मटीरियल 3 एक्सप्रेसिव स्टाइल सक्षम करें।");
+            map.put(R.string.gboard_patches_undo_button_title, "अनडू बटन (Undo button)");
+            map.put(R.string.gboard_patches_undo_button_summary, "स्वतः सुधार और टेक्स्ट संपादन के बाद सुझाव पट्टी में सक्रिय अनडू चिप दिखाएं।");
             catalogs.put("hi", map);
         }
         {
@@ -1015,6 +1077,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "角丸キー");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Material 3 Expressiveの角丸（Belka）キースタイルを有効にします。");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "よく使う絵文字");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "絵文字ドロワーで最近使用した絵文字の代わりによく使う絵文字を表示します");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex タイポグラフィ");
+            map.put(R.string.gboard_patches_google_sans_summary, "キーボードのキーキャップでGoogle Sans FlexフォントとMaterial 3 Expressiveスタイルを有効にします。");
+            map.put(R.string.gboard_patches_undo_button_title, "元に戻すボタン");
+            map.put(R.string.gboard_patches_undo_button_summary, "自動修正やテキスト編集の後、候補ストリップにプロアクティブな「元に戻す」チップを表示します。");
             catalogs.put("ja", map);
         }
         {
@@ -1125,6 +1193,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "둥근 키");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Material 3 Expressive 둥근(Belka) 키 스타일을 사용합니다.");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "자주 사용하는 그림문자");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "그림문자 서랍에 최근 사용한 그림문자 대신 자주 사용하는 그림문자를 표시합니다");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex 서체");
+            map.put(R.string.gboard_patches_google_sans_summary, "키보드 키캡에 Google Sans Flex 글꼴 및 Material 3 Expressive 스타일을 적용합니다.");
+            map.put(R.string.gboard_patches_undo_button_title, "실행 취소 버튼");
+            map.put(R.string.gboard_patches_undo_button_summary, "자동 수정 및 텍스트 편집 후 제안 스트립에 실행 취소 칩을 표시합니다.");
             catalogs.put("ko", map);
         }
         {
@@ -1235,6 +1309,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "圆角按键");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "启用 Material 3 Expressive 圆角 (Belka) 按键样式。");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "常用表情符号");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "在表情面板中显示常用表情而不是最近使用的表情");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex 字体");
+            map.put(R.string.gboard_patches_google_sans_summary, "在键盘键帽上启用 Google Sans Flex 字体和 Material 3 Expressive 样式。");
+            map.put(R.string.gboard_patches_undo_button_title, "撤消按钮");
+            map.put(R.string.gboard_patches_undo_button_summary, "在自动更正和文本编辑后在候选词栏中显示主动撤消条目。");
             catalogs.put("zh", map);
         }
         {
@@ -1345,6 +1425,26 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "من غير الواضح حالياً ما إذا كان يلزم تنزيل آخر. تأكد من أنك استخدمت حزمة مجمّعة أو مجزأة (APKM) وطبّقت الترقيع عبر Gboard_Pro Patcher؛ فحزم APK المستقلة لن تعمل.\\nانقر لعرض صفحة التنزيل على APKMirror");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "مفاتيح مستديرة");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "تفعيل نمط المفاتيح المستديرة Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "الرموز التعبيرية الأكثر استخداماً");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "إظهار الرموز التعبيرية الأكثر استخداماً بدلاً من المستخدمة حديثاً في درج الرموز التعبيرية");
+            map.put(R.string.gboard_patches_google_sans_title, "خط Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "تفعيل خط Google Sans Flex على مفاتيح لوحة المفاتيح ونمط Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "زر التراجع");
+            map.put(R.string.gboard_patches_undo_button_summary, "إظهار شريحة التراجع الاستباقية في شريط الاقتراحات بعد التصحيح التلقائي وتعديلات النص.");
+            map.put(R.string.gboard_patches_clipboard_history_title, "سجل الحافظة");
+            map.put(R.string.gboard_patches_clipboard_history_summary, "إدارة مدة الاحتفاظ بالحافظة");
+            map.put(R.string.gboard_patches_clipboard_history_header_summary, "تكوين مدة الاحتفاظ بعناصر الحافظة");
+            map.put(R.string.gboard_patches_clipboard_history_error_title, "إعدادات الحافظة غير متوفرة");
+            map.put(R.string.gboard_patches_clipboard_history_error_summary, "تعذر تحميل تفضيلات سجل الحافظة");
+            map.put(R.string.gboard_patches_clipboard_history_duration_title, "مدة الاحتفاظ بالسجل");
+            map.put(R.string.gboard_patches_clipboard_history_duration_summary, "اختر مدة الاحتفاظ بالعناصر غير المثبتة");
+            map.put(R.string.gboard_patches_clipboard_history_duration_dialog_title, "مدة سجل الحافظة");
+            map.put(R.string.gboard_patches_clipboard_history_duration_1h, "ساعة واحدة");
+            map.put(R.string.gboard_patches_clipboard_history_duration_24h, "24 ساعة");
+            map.put(R.string.gboard_patches_clipboard_history_duration_7d, "7 أيام");
+            map.put(R.string.gboard_patches_clipboard_history_duration_30d, "30 يوماً");
+            map.put(R.string.gboard_patches_clipboard_history_duration_never, "أبداً (غير محدود / الحذف اليدوي فقط)");
+            map.put(R.string.gboard_patches_clipboard_history_section_behavior, "سلوك الاحتفاظ");
             catalogs.put("ar", map);
         }
         {
@@ -1455,6 +1555,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Tombol Membulat");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Aktifkan gaya tombol membulat Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Emoji yang sering digunakan");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Tampilkan emoji yang sering digunakan alih-alih emoji terbaru di laci emoji");
+            map.put(R.string.gboard_patches_google_sans_title, "Tipografi Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Aktifkan font Google Sans Flex pada tombol keyboard dan gaya Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Tombol Urungkan");
+            map.put(R.string.gboard_patches_undo_button_summary, "Tampilkan chip Urungkan proaktif di strip saran setelah koreksi otomatis dan edit teks.");
             catalogs.put("in", map);
         }
         {
@@ -1565,6 +1671,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Yuvarlatılmış Tuşlar");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Material 3 Expressive yuvarlatılmış (Belka) tuş stilini etkinleştirin.");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Sık kullanılan emojiler");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Emoji çekmecesinde son kullanılan emojiler yerine sık kullanılan emojileri göster");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex tipografisi");
+            map.put(R.string.gboard_patches_google_sans_summary, "Klavye tuş başlıklarında Google Sans Flex yazı tipini ve Material 3 Expressive stilini etkinleştirin.");
+            map.put(R.string.gboard_patches_undo_button_title, "Geri al düğmesi");
+            map.put(R.string.gboard_patches_undo_button_summary, "Otomatik düzeltme ve metin düzenlemelerinden sonra öneri şeridinde geri alma çipi gösterin.");
             catalogs.put("tr", map);
         }
         {
@@ -1675,6 +1787,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Phím bo tròn");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Bật kiểu phím bo tròn Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Biểu tượng cảm xúc thường dùng");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Hiển thị biểu tượng cảm xúc thường dùng thay vì biểu tượng gần đây trong ngăn biểu tượng");
+            map.put(R.string.gboard_patches_google_sans_title, "Phông chữ Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Bật phông chữ Google Sans Flex trên các phím bàn phím và kiểu Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Nút hoàn tác");
+            map.put(R.string.gboard_patches_undo_button_summary, "Hiển thị chip Hoàn tác chủ động trong dải gợi ý sau khi tự động sửa và chỉnh sửa văn bản.");
             catalogs.put("vi", map);
         }
         {
@@ -1785,6 +1903,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Zaokrąglone klawisze");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Włącz zaokrąglony styl klawiszy Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Często używane emotikony");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Pokaż często używane emotikony zamiast ostatnio używanych w panelu emotikonów");
+            map.put(R.string.gboard_patches_google_sans_title, "Typografia Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Włącz czcionkę Google Sans Flex na klawiszach klawiatury i styl Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Przycisk cofania");
+            map.put(R.string.gboard_patches_undo_button_summary, "Pokaż proaktywny kafelek Cofnij na pasku podpowiedzi po autokorekcie i edycji tekstu.");
             catalogs.put("pl", map);
         }
         {
@@ -1895,6 +2019,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Afgeronde toetsen");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Schakel Material 3 Expressive afgeronde (Belka) toetsstijl in.");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Veelgebruikte emoji's");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Toon veelgebruikte emoji's in plaats van recent gebruikte emoji's in het emojipaneel");
+            map.put(R.string.gboard_patches_google_sans_title, "Google Sans Flex-typografie");
+            map.put(R.string.gboard_patches_google_sans_summary, "Schakel het lettertype Google Sans Flex op toetsen en Material 3 Expressive-stijl in.");
+            map.put(R.string.gboard_patches_undo_button_title, "Knop Ongedaan maken");
+            map.put(R.string.gboard_patches_undo_button_summary, "Toon een proactieve Ongedaan maken-knop in de suggestiebalk na autocorrectie en bewerkingen.");
             catalogs.put("nl", map);
         }
         {
@@ -2005,6 +2135,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "ปุ่มโค้งมน");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "เปิดใช้รูปแบบปุ่มโค้งมน Material 3 Expressive (Belka)");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "อีโมจิที่ใช้บ่อย");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "แสดงอีโมจิที่ใช้บ่อยแทนอีโมจิที่ใช้ล่าสุดในลิ้นชักอีโมจิ");
+            map.put(R.string.gboard_patches_google_sans_title, "ตัวพิมพ์ Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "เปิดใช้ฟอนต์ Google Sans Flex บนแป้นคีย์บอร์ดและรูปแบบ Material 3 Expressive");
+            map.put(R.string.gboard_patches_undo_button_title, "ปุ่มเลิกทำ");
+            map.put(R.string.gboard_patches_undo_button_summary, "แสดงชิปเลิกทำในแถบข้อเสนอแนะหลังจากแก้ไขคำผิดอัตโนมัติและแก้ไขข้อความ");
             catalogs.put("th", map);
         }
         {
@@ -2115,6 +2251,12 @@ final class GboardSettingsTextCatalog {
             map.put(R.string.gboard_patches_advanced_voice_payload_unknown_requirement_summary, "It is currently unclear whether another download is needed. Verify that you used a bundle or split APKM and applied the patch with Gboard_Pro Patcher; a standalone APK cannot work.\\nTap to view the APKMirror download page");
             map.put(R.string.gboard_patches_rounded_keys_enabled_title, "Закруглені клавіші");
             map.put(R.string.gboard_patches_rounded_keys_enabled_summary, "Увімкнути закруглений стиль клавіш Material 3 Expressive (Belka).");
+            map.put(R.string.gboard_patches_frequently_used_emojis_title, "Часто використовувані емодзі");
+            map.put(R.string.gboard_patches_frequently_used_emojis_summary, "Показувати часто використовувані емодзі замість нещодавніх на панелі емодзі");
+            map.put(R.string.gboard_patches_google_sans_title, "Шрифт Google Sans Flex");
+            map.put(R.string.gboard_patches_google_sans_summary, "Увімкнути шрифт Google Sans Flex на клавішах клавіатури та стиль Material 3 Expressive.");
+            map.put(R.string.gboard_patches_undo_button_title, "Кнопка «Скасувати»");
+            map.put(R.string.gboard_patches_undo_button_summary, "Показувати активний значок скасування на панелі підказок після автовиправлення та редагування.");
             catalogs.put("uk", map);
         }
         return catalogs;

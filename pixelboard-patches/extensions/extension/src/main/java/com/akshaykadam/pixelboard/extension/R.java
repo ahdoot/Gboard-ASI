@@ -108,6 +108,26 @@ public final class R {
         public static final int gboard_patches_section_features = 0x7f030066;
         public static final int gboard_patches_section_preferences = 0x7f030067;
         public static final int gboard_patches_warning_label = 0x7f030069;
+        public static final int gboard_patches_frequently_used_emojis_title = 0x7f03006a;
+        public static final int gboard_patches_frequently_used_emojis_summary = 0x7f03006b;
+        public static final int gboard_patches_google_sans_title = 0x7f03006c;
+        public static final int gboard_patches_google_sans_summary = 0x7f03006d;
+        public static final int gboard_patches_undo_button_title = 0x7f03006e;
+        public static final int gboard_patches_undo_button_summary = 0x7f03006f;
+        public static final int gboard_patches_clipboard_history_title = 0x7f030070;
+        public static final int gboard_patches_clipboard_history_summary = 0x7f030071;
+        public static final int gboard_patches_clipboard_history_header_summary = 0x7f030072;
+        public static final int gboard_patches_clipboard_history_error_title = 0x7f030073;
+        public static final int gboard_patches_clipboard_history_error_summary = 0x7f030074;
+        public static final int gboard_patches_clipboard_history_duration_title = 0x7f030075;
+        public static final int gboard_patches_clipboard_history_duration_summary = 0x7f030076;
+        public static final int gboard_patches_clipboard_history_duration_dialog_title = 0x7f030077;
+        public static final int gboard_patches_clipboard_history_duration_1h = 0x7f030078;
+        public static final int gboard_patches_clipboard_history_duration_24h = 0x7f030079;
+        public static final int gboard_patches_clipboard_history_duration_7d = 0x7f03007a;
+        public static final int gboard_patches_clipboard_history_duration_30d = 0x7f03007b;
+        public static final int gboard_patches_clipboard_history_duration_never = 0x7f03007c;
+        public static final int gboard_patches_clipboard_history_section_behavior = 0x7f03007d;
     }
 
     public static final class color {
