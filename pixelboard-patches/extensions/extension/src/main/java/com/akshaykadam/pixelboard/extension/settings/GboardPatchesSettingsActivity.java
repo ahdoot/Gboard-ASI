@@ -1736,7 +1736,7 @@ public final class GboardPatchesSettingsActivity extends Activity
             }
         } catch (Throwable ignored) {
         }
-        return "2.0.6";
+        return BuildConfig.PATCH_VERSION;
     }
 
     private View buildToolbar() {

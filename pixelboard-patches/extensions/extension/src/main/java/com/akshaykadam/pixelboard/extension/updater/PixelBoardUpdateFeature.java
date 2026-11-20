@@ -397,7 +397,7 @@ public final class PixelBoardUpdateFeature implements GboardPatchesSettingsContr
             } catch (PackageManager.NameNotFoundException ignored) {
             }
         }
-        return "2.0.6";
+        return "2.0.7";
     }
 
     private static String resolveBaseGboardVersion(Context context) {
@@ -451,10 +451,10 @@ public final class PixelBoardUpdateFeature implements GboardPatchesSettingsContr
     }
 
     private static String getDefaultChangelog() {
-        return "* **Extended Clipboard History**: Discrete 5-step retention slider (1 hour, 24 hours default, 7 days, 30 days, Never) with up to 100 unpinned recent clips and localized retention tips across 83 languages\n"
-                + "* **Google Sans Flex & Undo Controls**: New toggles in Advanced Settings for Google Sans Flex keycap typography and proactive suggestion-strip Undo chips, plus fixed Frequently Used Emojis tab persistence\n"
-                + "* **Rambler Voice Dictation Fixes**: Verbatim transcript preservation, mid-sentence edit protection, 1.5s screen-rotation session grace, strict language enforcement, and dedicated minimize key placement\n"
-                + "* **Symbol Key Label Sanitizer**: Removes backslash and theme attribute artifacts from symbol and shifted key labels at runtime\n"
-                + "* **AI Writing Tools & Flag Engine**: Direct Boot safe initialization, Writing Tools V1 stability, updated decoder/autocorrect/Emojify/Fast-Access flags, and full RTL layout support";
+        return "* **AI Writing Tools Server Connection Fix**: Enforced reliable Gboard Server backend, eliminated 'cannot connect to server' errors, refined prompt template evaluation and request timeouts, and removed unstable V2 flag overrides for rock-solid proofreading and rewrite\n"
+                + "* **Direct Boot & Secure Storage Safety**: Full user-unlock state verification preventing crashes during cold device boots prior to first unlock\n"
+                + "* **Refined Voice Dictation & Anti-Drift**: Robust speech diff preservation for voice edits, rotation grace window, and strict language enforcement\n"
+                + "* **Extended 24h Clipboard Retention**: 24h default retention, 100-item recent clip capacity, 5-step slider, and localized pin tips across 83 languages\n"
+                + "* **Gboard Pro Customization Suite**: All 5 Material 3 Expressive themes, AMOLED Pure Black, Pro hub, and 8h automated update checks preserved";
     }
 }
