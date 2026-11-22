@@ -1,38 +1,51 @@
 ## Overview
 
-Gboard Pro **v2.1.1** updates the core base package to the latest official **Gboard 18.6.3** (`18.6.3.1002251336-release-arm64-v8a`, `versionCode: 176071768`), achieving complete upstream parity with PixelBoard 1.3.6 while preserving the full Gboard Pro identity (`com.gboardpro.app`), Material 3 Expressive UI, and custom features.
+Gboard Pro **v2.1.1** is a critical update that restores all signature Gboard Pro custom features, introduces a brand-new **Liquid Glass Default App & Package Icon**, and implements full, native **Edge-to-Edge Display Support** across all settings screens and activities.
 
 ---
 
 ## What's Changed
 
-### Core Base Upgrade
-* **Rebased onto Gboard 18.6.3**: Updated from `18.4.1.985164140` to official Google Gboard `18.6.3.1002251336-release-arm64-v8a` (`versionCode: 176071768`), providing the latest stock layout improvements, engine optimizations, and upstream stability enhancements.
-* **Full PixelBoard 1.3.6 Feature Parity**:
-  * **Candidate Strip Emoji Slot Placement**: Positions suggested emoji candidates on the right side of the candidate strip (Slot 2 in standard 3-slot strip), leaving left and center slots open for raw verbatim speech and predictive completions.
-  * **Safe Keypress & Cursor Drag Haptic Feedback**: Explicitly passes `FLAG_IGNORE_GLOBAL_SETTING` on keypress and cursor drag haptics, guaranteeing tactile feedback on Honor MagicOS, Huawei EMUI, and devices with system-wide vibration disabled.
-  * **Screen Rotation Grace Period for Rambler Dictation**: 2500ms grace window with 1000ms baseline delay and active display rotation listener prevents voice session drops during screen rotations and foldable device unfolds.
-  * **Speech Diff Preservation & Microsoft Word / Office Sync**: Retains speech diffs for voice replacements and mid-sentence voice edits while automatically adapting for Microsoft Word and Office apps to prevent cursor desynchronization.
-  * **Header Minimize Key Positioning**: Places the Rambler minimize key next to the close button on the left header position (`key_pos_header_start_extra_key`).
-  * **Rambler Stock Policy & Jetson Cursor Awareness**: Enforces `jetson_enable_cursor_awareness` in stock phenotype policy for voice editing accuracy.
-  * **AI Writing Tools Connectivity & 2000-Word Limit**: Enforces a 2000-word limit for Proofread and Rewrite, updates candidate threshold to 0.0, enables proofread apps allowlist, and forces v2 landscape layout.
-  * **Android 10+ (API 29) Minimum SDK Compatibility**: `minSdkVersion` set to 29, supporting Android 10, 11, 12, 13, 14, 15, and 16.
-  * **Show in App List Toggle**: Unlocked launcher icon visibility toggle across all devices.
+### 🎨 Brand-New Liquid Glass Default Icon
+* **Native Liquid Glass App Icon**: Replaced default legacy icons with the user-selected high-definition Liquid Glass Gboard Pro emblem.
+* **Full Multi-Density Support**: Generated crisp, optimized icon assets across all screen densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) for both legacy launchers (`ic_app.png`, `ic_app_round.png`) and modern adaptive icon systems (`mipmap_0x7f110002.webp`).
+* **Package Icon Integration**: Integrated seamlessly across app launcher, system settings, recents screen, and notification shades.
 
-### Gboard Pro Exclusive Features Preserved
-* **Standalone Coexistence**: Installed as `com.gboardpro.app` with app name `Gboard Pro`, allowing side-by-side operation with stock Gboard without root.
-* **Custom Appearance Themes**: Material 3 Expressive theme palettes including Blush Lilac, Cotton Candy, Sunset Peach, Fresh Mint, and AMOLED Pure Black dark mode.
-* **Extended 24-Hour Clipboard Retention**: Unpinned clips retained for 24 hours with 100 recent clip cap and discrete slider options (1h, 2h, 3h, 6h, 12h, 18h, 24h).
-* **Material 3 Expressive About Screen**: Native M3 About interface featuring real-time Mbps download speed meter and 8-hour background auto-updater targeting `smartworldarafath/Gboard_Pro`.
-* **High Refresh Rate & Smooth Transitions**: 144Hz / 120Hz IME window refresh rate enforcement and fluid Material 3 activity transitions.
+### 📱 Full Native Edge-to-Edge Support
+* **Immersive System Bar Drawing**: Enabled `setDecorFitsSystemWindows(false)` on Android 11+ (API 30+) with fully transparent status bar and navigation bar.
+* **Cutout & Notch Compatibility**: Configured `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` for display notches and punch-holes on Android 9+ (API 28+).
+* **Smart Inset Padding**: Attached dynamic `OnApplyWindowInsetsListener` to content views to prevent any overlap or clipping with gesture bars, navigation buttons, or camera cutouts.
+* **Disabled Contrast Enforcing**: Set `setStatusBarContrastEnforced(false)` and `setNavigationBarContrastEnforced(false)` on Android 10+ (API 29+) to guarantee pure edge-to-edge aesthetics without Android scrim tinting.
+
+### 🔄 Restored Gboard Pro Exclusive Features
+* **Material 3 Expressive Themes**:
+  * **Blush Lilac**: Signature soft lavender and petal pink pastel palette.
+  * **Cotton Candy**: Playful sky blue and pastel magenta palette.
+  * **Sunset Peach**: Warm apricot, coral, and terracotta palette.
+  * **Fresh Mint**: Refreshing sage, crisp mint, and pine teal palette.
+  * **AMOLED Pure Black**: True black `#000000` surface and key background for maximum battery savings on OLED displays.
+* **Extended 24-Hour Clipboard Retention**:
+  * Unpinned clips retained for up to 24 hours (bypassing Google's 1-hour auto-deletion).
+  * 100 recent clip cap with discrete slider selector (1h, 2h, 3h, 6h, 12h, 18h, 24h).
+* **Material 3 Expressive About Screen & Live Updater**:
+  * Real-time Mbps download speed gauge and update progress indicator.
+  * Seamless background checking against `smartworldarafath/Gboard_Pro`.
+* **High Refresh Rate & Smooth Transitions**: Enforces 120Hz/144Hz IME window refresh rate for stutter-free fluid typing.
+
+### ⚡ Upstream PixelBoard 1.3.6 Enhancements
+* **Candidate Strip Emoji Slot Placement**: Places emoji candidates on the right side of the candidate strip, reserving center slots for speech and predictive completions.
+* **Safe Keypress & Cursor Drag Haptic Feedback**: Explicitly passes `FLAG_IGNORE_GLOBAL_SETTING` to guarantee tactile feedback on Honor MagicOS, Huawei EMUI, and devices with system vibration disabled.
+* **Screen Rotation Grace Period for Rambler Dictation**: 2500ms grace window with display rotation listener prevents voice session drops during screen rotations and foldable unfolding.
+* **Speech Diff Preservation & Microsoft Office Sync**: Retains speech diffs for voice replacements and avoids cursor desynchronization in Microsoft Word/Office apps.
+* **Header Minimize Key Positioning**: Places Rambler minimize key next to the close button on the left header position.
 
 ---
 
 ## Installation & Upgrade
 
 1. Download `Gboard_Pro.apk` from the Assets section below.
-2. Install the APK directly on your device (Android 10+ supported; no root required).
-3. If upgrading from Gboard Pro v2.1.0 or earlier, install directly over your existing installation to preserve all settings, clipboard history, and dictionary data.
+2. Install directly on your device (Android 10+ supported; no root required).
+3. If upgrading from earlier versions, install directly over your existing installation to preserve all custom settings, dictionary data, and clipboard items.
 4. Enable **Gboard Pro** in **Settings > System > Languages & input > On-screen keyboard**.
 
 ---
@@ -40,8 +53,7 @@ Gboard Pro **v2.1.1** updates the core base package to the latest official **Gbo
 ## Package Details
 * **App Name**: Gboard Pro
 * **Package Name**: `com.gboardpro.app`
-* **Version Name**: `18.6.3.1002251336-release-arm64-v8a`
-* **Version Code**: `176071768`
+* **Version Code**: `176071770`
 * **Patch Version**: `v2.1.1`
 * **Min SDK**: 29 (Android 10+)
 * **Target SDK**: 37 (Android 16+)
@@ -51,4 +63,4 @@ Gboard Pro **v2.1.1** updates the core base package to the latest official **Gbo
 ---
 
 ## Checksums
-* `Gboard_Pro.apk`: `7d1ef89151b1c239c52e252455201823a5d65a163ff58688381b3019f83f6a76`
+* `Gboard_Pro.apk`: `c7d6fdd541674a91abf28c71f9f880ed956db3767ad3ee4911a343a4a2a54f86`

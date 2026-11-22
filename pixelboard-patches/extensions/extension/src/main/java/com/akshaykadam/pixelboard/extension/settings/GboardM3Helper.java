@@ -456,9 +456,9 @@ public final class GboardM3Helper {
         } catch (Throwable ignored) {
         }
 
-        // Configure window, system bars, and refresh rate safely
+        // Configure window, system bars, edge-to-edge and refresh rate safely
         try {
-            Window window = activity.getWindow();
+            final Window window = activity.getWindow();
             if (window != null) {
                 window.setBackgroundDrawable(new ColorDrawable(palette.windowBackground));
 
@@ -466,17 +466,37 @@ public final class GboardM3Helper {
                     try {
                         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-                        window.setStatusBarColor(palette.windowBackground);
-                        window.setNavigationBarColor(palette.windowBackground);
+                        window.setStatusBarColor(Color.TRANSPARENT);
+                        window.setNavigationBarColor(Color.TRANSPARENT);
+                    } catch (Throwable ignored) {
+                    }
+                }
+
+                // Android 10+ (API 29+): disable contrast enforcement so bars remain completely transparent
+                if (Build.VERSION.SDK_INT >= 29) {
+                    try {
+                        window.setStatusBarContrastEnforced(false);
+                        window.setNavigationBarContrastEnforced(false);
+                    } catch (Throwable ignored) {
+                    }
+                }
+
+                // Android 9+ (API 28+): extend layout into display cutout (notch / punch hole)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    try {
+                        WindowManager.LayoutParams lp = window.getAttributes();
+                        lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                        window.setAttributes(lp);
                     } catch (Throwable ignored) {
                     }
                 }
 
                 enforceHighRefreshRate(window);
 
+                // Android 11+ (API 30+): full edge-to-edge drawing
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     try {
-                        window.setDecorFitsSystemWindows(true);
+                        window.setDecorFitsSystemWindows(false);
                         WindowInsetsController controller = window.getInsetsController();
                         if (controller != null) {
                             int appearance = !palette.isNight
@@ -493,7 +513,10 @@ public final class GboardM3Helper {
                     try {
                         View decor = window.getDecorView();
                         if (decor != null) {
-                            int flags = decor.getSystemUiVisibility();
+                            int flags = decor.getSystemUiVisibility()
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
                             if (!palette.isNight) {
                                 flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
                             }
@@ -504,6 +527,34 @@ public final class GboardM3Helper {
                         }
                     } catch (Throwable ignored) {
                     }
+                }
+
+                // Inset padding listener on the content root to prevent system bar overlap
+                try {
+                    final View contentView = activity.findViewById(android.R.id.content);
+                    if (contentView != null) {
+                        contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                            @Override
+                            public android.view.WindowInsets onApplyWindowInsets(View v, android.view.WindowInsets insets) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                    android.graphics.Insets bars = insets.getInsets(
+                                            android.view.WindowInsets.Type.systemBars() | android.view.WindowInsets.Type.displayCutout()
+                                    );
+                                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                                    v.setPadding(
+                                            insets.getSystemWindowInsetLeft(),
+                                            insets.getSystemWindowInsetTop(),
+                                            insets.getSystemWindowInsetRight(),
+                                            insets.getSystemWindowInsetBottom()
+                                    );
+                                }
+                                return insets;
+                            }
+                        });
+                        contentView.requestApplyInsets();
+                    }
+                } catch (Throwable ignored) {
                 }
             }
         } catch (Throwable ignored) {
