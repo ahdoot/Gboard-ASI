@@ -38,10 +38,10 @@
 
   <link rel="icon" type="image/png" href="images/icon.png">
 
-  <!-- Google Fonts: Google Sans & Inter -->
+  <!-- High-End Humanist & Geometric Typography: Plus Jakarta Sans, Google Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     /* ============================================================
@@ -120,8 +120,8 @@
       --toggle-btn-border: rgba(255, 255, 255, 0.14);
       --toggle-btn-hover: rgba(255, 255, 255, 0.18);
 
-      --font-display: 'Google Sans', 'Inter', -apple-system, sans-serif;
-      --font-body: 'Google Sans Text', 'Inter', -apple-system, sans-serif;
+      --font-display: 'Plus Jakarta Sans', 'Google Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      --font-body: 'Plus Jakarta Sans', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
       
       --radius-sm: 10px;
       --radius-md: 18px;
@@ -217,6 +217,8 @@
       font-family: var(--font-body);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
       overflow-x: hidden;
     }
 
@@ -230,30 +232,33 @@
     /* ============================================================
        BUTTER-SMOOTH THEME SWITCHING TRANSITION ANIMATIONS
        ============================================================ */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation: none;
-      mix-blend-mode: normal;
-    }
     ::view-transition-old(root) {
-      z-index: 1;
+      animation: 320ms cubic-bezier(0.2, 0, 0, 1) both fadeOutTheme;
     }
     ::view-transition-new(root) {
-      z-index: 9999;
+      animation: 320ms cubic-bezier(0.2, 0, 0, 1) both fadeInTheme;
+    }
+    @keyframes fadeOutTheme {
+      from { opacity: 1; filter: blur(0px); }
+      to { opacity: 0; filter: blur(4px); }
+    }
+    @keyframes fadeInTheme {
+      from { opacity: 0; filter: blur(4px); }
+      to { opacity: 1; filter: blur(0px); }
     }
 
-    /* Fallback smooth transition for CSS-driven theme switch */
+    /* Universal smooth fallback for CSS transitions */
     html.theme-transitioning,
     html.theme-transitioning *,
     html.theme-transitioning *::before,
     html.theme-transitioning *::after {
-      transition: background-color 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  background 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  color 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  border-color 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  box-shadow 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  fill 0.45s cubic-bezier(0.2, 0.0, 0, 1.0),
-                  stroke 0.45s cubic-bezier(0.2, 0.0, 0, 1.0) !important;
+      transition: background-color 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  background 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  color 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  border-color 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  box-shadow 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  fill 0.4s cubic-bezier(0.2, 0.0, 0, 1.0),
+                  stroke 0.4s cubic-bezier(0.2, 0.0, 0, 1.0) !important;
       transition-delay: 0s !important;
     }
 
@@ -413,33 +418,61 @@
       gap: 10px;
     }
 
-    /* Animated Theme Switch Toggle Button */
+    /* Liquid Glass Theme Switch Toggle Lens */
     .theme-toggle-btn {
-      width: 38px;
-      height: 38px;
+      position: relative;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-pill);
-      background: var(--toggle-btn-bg);
-      border: 1px solid var(--toggle-btn-border);
-      color: var(--text-pri);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.25),
+        0 4px 14px rgba(0, 0, 0, 0.22);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      position: relative;
       overflow: hidden;
       flex-shrink: 0;
       outline: none;
-      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s var(--ease-gemini);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    html[data-theme="light"] .theme-toggle-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 244, 252, 0.6) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.06),
+        0 4px 14px rgba(60, 64, 67, 0.12);
+    }
+
+    .theme-toggle-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: inherit;
+      pointer-events: none;
     }
 
     .theme-toggle-btn:hover {
-      background: var(--toggle-btn-hover);
+      transform: translateY(-1.5px) scale(1.08);
       border-color: rgba(66, 133, 244, 0.45);
-      transform: scale(1.08);
+      box-shadow: 
+        inset 0 2px 1.5px rgba(255, 255, 255, 0.6),
+        0 8px 22px rgba(66, 133, 244, 0.35);
     }
 
     .theme-toggle-btn:active {
-      transform: scale(0.92);
+      transform: translateY(1px) scale(0.92);
     }
 
     .theme-icon-sun, .theme-icon-moon {
@@ -447,6 +480,7 @@
       width: 19px;
       height: 19px;
       transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+      pointer-events: none;
     }
 
     /* Dark mode: Moon visible, Sun hidden */
@@ -475,26 +509,54 @@
       color: #E37400;
     }
 
+    /* Liquid Glass Navbar CTA Button */
     .nav-cta {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: linear-gradient(135deg, #4285F4, #9B72CF);
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.92), rgba(155, 114, 207, 0.92));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: #FFFFFF !important;
       text-decoration: none;
+      font-family: var(--font-display);
       font-size: 13px;
       font-weight: 600;
       padding: 8px 18px;
       border-radius: var(--radius-pill);
-      box-shadow: 0 4px 18px rgba(66, 133, 244, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.65),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25),
+        0 6px 20px -2px rgba(66, 133, 244, 0.45);
+      overflow: hidden;
       white-space: nowrap;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.24s ease, filter 0.24s ease;
+    }
+
+    .nav-cta::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: inherit;
+      pointer-events: none;
     }
 
     .nav-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(155, 114, 207, 0.55);
-      filter: brightness(1.08);
+      transform: translateY(-1.5px) scale(1.02);
+      box-shadow: 
+        inset 0 2px 1.5px 0 rgba(255, 255, 255, 0.85),
+        0 10px 28px -2px rgba(66, 133, 244, 0.6);
+      filter: brightness(1.06);
+    }
+
+    .nav-cta:active {
+      transform: translateY(1px) scale(0.97);
     }
 
     /* Responsive Nav Rules */
@@ -562,9 +624,9 @@
     .hero-title {
       font-family: var(--font-display);
       font-size: clamp(38px, 6vw, 76px);
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.08;
-      letter-spacing: -1.5px;
+      letter-spacing: -0.035em;
       max-width: 980px;
       margin: 0 auto 24px;
       color: var(--text-pri);
@@ -578,12 +640,14 @@
     }
 
     .hero-subtitle {
+      font-family: var(--font-body);
       font-size: clamp(16px, 2.1vw, 20px);
-      line-height: 1.55;
+      line-height: 1.62;
       color: var(--text-sec);
       max-width: 760px;
       margin: 0 auto 40px;
       font-weight: 400;
+      letter-spacing: -0.012em;
     }
 
     .hero-actions {
@@ -595,46 +659,132 @@
       margin-bottom: 50px;
     }
 
+    /* Liquid Glass Primary Button */
     .btn-primary {
+      position: relative;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      background: linear-gradient(135deg, #4285F4 0%, #7C4DFF 50%, #B388FF 100%);
-      color: #FFFFFF;
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.92) 0%, rgba(124, 77, 255, 0.88) 50%, rgba(179, 136, 255, 0.84) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      color: #FFFFFF !important;
       text-decoration: none;
+      font-family: var(--font-display);
       font-size: 15.5px;
       font-weight: 600;
+      letter-spacing: -0.01em;
       padding: 15px 34px;
       border-radius: var(--radius-pill);
-      box-shadow: 0 10px 32px rgba(66, 133, 244, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.16) inset;
-      transition: transform 0.22s var(--ease-gemini), box-shadow 0.22s var(--ease-gemini);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25),
+        0 10px 32px -4px rgba(66, 133, 244, 0.48),
+        0 4px 12px 0 rgba(124, 77, 255, 0.3);
+      overflow: hidden;
+      transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.26s ease;
+      will-change: transform;
+    }
+
+    .btn-primary::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: inherit;
+      pointer-events: none;
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px) scale(1.01);
-      box-shadow: 0 14px 42px rgba(124, 77, 255, 0.6);
+      transform: translateY(-2px) scale(1.015);
+      box-shadow: 
+        inset 0 2px 2px 0 rgba(255, 255, 255, 0.85),
+        inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.2),
+        0 16px 44px -4px rgba(66, 133, 244, 0.62),
+        0 6px 18px 0 rgba(124, 77, 255, 0.45);
+      filter: brightness(1.05);
     }
 
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+        0 6px 20px -2px rgba(66, 133, 244, 0.4);
+    }
+
+    /* Liquid Glass Secondary Button */
     .btn-secondary {
+      position: relative;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      background: var(--btn-sec-bg);
-      color: var(--btn-sec-text);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      color: var(--text-pri) !important;
       text-decoration: none;
+      font-family: var(--font-display);
       font-size: 15.5px;
       font-weight: 500;
+      letter-spacing: -0.01em;
       padding: 15px 30px;
       border-radius: var(--radius-pill);
-      border: 1px solid var(--btn-sec-border);
-      backdrop-filter: blur(12px);
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.28),
+        inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.2),
+        0 8px 24px -4px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.26s ease, border-color 0.26s ease, background 0.26s ease;
+      will-change: transform;
+    }
+
+    .btn-secondary::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    html[data-theme="light"] .btn-secondary {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 244, 252, 0.6) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05),
+        0 8px 20px -4px rgba(60, 64, 67, 0.1);
     }
 
     .btn-secondary:hover {
-      background: var(--btn-sec-hover);
-      border-color: var(--border-hover);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      border-color: rgba(155, 114, 207, 0.45);
+      box-shadow: 
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.45),
+        0 12px 30px -4px rgba(0, 0, 0, 0.38),
+        0 0 18px rgba(155, 114, 207, 0.2);
+    }
+
+    html[data-theme="light"] .btn-secondary:hover {
+      border-color: rgba(66, 133, 244, 0.35);
+      box-shadow: 
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+        0 12px 28px -4px rgba(60, 64, 67, 0.15),
+        0 0 18px rgba(66, 133, 244, 0.12);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px) scale(0.98);
     }
 
     /* ============================================================
@@ -718,26 +868,52 @@
       gap: 8px;
     }
 
+    /* Liquid Glass Prompt Chips */
     .chip-btn {
-      background: var(--chip-bg);
-      border: 1px solid var(--chip-border);
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       color: var(--chip-text);
-      font-size: 12.5px;
+      font-family: var(--font-body);
+      font-size: 13px;
       font-weight: 500;
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: var(--radius-pill);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+      gap: 7px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    html[data-theme="light"] .chip-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 244, 250, 0.55) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        0 2px 8px rgba(60, 64, 67, 0.08);
     }
 
     .chip-btn:hover, .chip-btn.active {
-      background: rgba(66, 133, 244, 0.18);
-      border-color: rgba(66, 133, 244, 0.45);
-      color: #4285F4;
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.24) 0%, rgba(155, 114, 207, 0.24) 100%);
+      border-color: rgba(66, 133, 244, 0.55);
+      color: var(--gemini-cyan);
+      transform: translateY(-1.5px);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.4),
+        0 6px 18px rgba(66, 133, 244, 0.25);
+    }
+
+    html[data-theme="light"] .chip-btn:hover,
+    html[data-theme="light"] .chip-btn.active {
+      color: #1A73E8;
+      border-color: rgba(26, 115, 232, 0.45);
     }
 
     /* ============================================================
@@ -779,27 +955,46 @@
       margin-bottom: 30px;
     }
 
+    /* Liquid Glass Palette Selector Pills */
     .palette-pill {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 18px;
+      padding: 9px 20px;
       border-radius: var(--radius-pill);
-      background: var(--palette-pill-bg);
-      border: 1px solid var(--palette-pill-border);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       color: var(--palette-pill-text);
+      font-family: var(--font-body);
       font-size: 13.5px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.25s var(--ease-gemini);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        0 4px 14px rgba(0, 0, 0, 0.16);
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    html[data-theme="light"] .palette-pill {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(240, 244, 250, 0.6) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        0 3px 10px rgba(60, 64, 67, 0.08);
     }
 
     .palette-pill:hover, .palette-pill.active {
-      background: rgba(66, 133, 244, 0.14);
-      border-color: rgba(66, 133, 244, 0.45);
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.2) 0%, rgba(155, 114, 207, 0.2) 100%);
+      border-color: rgba(155, 114, 207, 0.5);
       color: var(--text-pri);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+        0 8px 24px rgba(0, 0, 0, 0.22),
+        0 0 18px rgba(155, 114, 207, 0.25);
     }
 
     .swatch {
@@ -1333,7 +1528,15 @@
       border: 4px solid #1a1e2e;
       overflow: hidden;
       transform: translateZ(0);
-      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    html[data-theme="light"] .device-phone-frame {
+      border-color: #D3D7E8;
+      box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        0 25px 60px -15px rgba(60, 64, 67, 0.35),
+        0 0 40px rgba(66, 133, 244, 0.15);
     }
 
     .device-phone-frame:hover {
@@ -1432,14 +1635,17 @@
       font-family: var(--font-display);
       font-size: 28px;
       font-weight: 700;
+      letter-spacing: -0.025em;
       margin-bottom: 12px;
       color: var(--text-pri);
     }
 
     .neon-console-desc {
+      font-family: var(--font-body);
       color: var(--text-sec);
       font-size: 15.5px;
-      line-height: 1.6;
+      line-height: 1.62;
+      letter-spacing: -0.01em;
       margin-bottom: 28px;
     }
 
@@ -1449,11 +1655,12 @@
     }
 
     .phrase-chips-label {
-      font-size: 13px;
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 12.5px;
+      font-weight: 700;
       color: var(--text-ter);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.08em;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
@@ -1466,26 +1673,45 @@
       gap: 9px;
     }
 
+    /* Liquid Glass Phrase Chips */
     .phrase-chip {
-      padding: 9px 16px;
-      border-radius: 14px;
-      background: var(--chip-bg);
-      border: 1px solid var(--chip-border);
+      position: relative;
+      padding: 10px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-pri);
+      font-family: var(--font-body);
       font-size: 13.5px;
       font-weight: 500;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+      gap: 8px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.28),
+        0 4px 14px rgba(0, 0, 0, 0.16);
+      transition: all 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    html[data-theme="light"] .phrase-chip {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(240, 244, 250, 0.6) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        0 3px 10px rgba(60, 64, 67, 0.08);
     }
 
     .phrase-chip:hover {
-      background: var(--bg-card-hover);
+      background: linear-gradient(135deg, rgba(155, 114, 207, 0.25), rgba(66, 133, 244, 0.2));
       border-color: rgba(155, 114, 207, 0.5);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3), 0 0 14px rgba(155, 114, 207, 0.2);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+        0 8px 22px rgba(0, 0, 0, 0.25),
+        0 0 16px rgba(155, 114, 207, 0.3);
     }
 
     .phrase-chip:active {
@@ -1503,13 +1729,17 @@
     .neon-spec-item {
       padding: 16px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--chip-bg);
       border: 1px solid var(--border-subtle);
       transition: all 0.25s ease;
     }
 
+    html[data-theme="light"] .neon-spec-item {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
     .neon-spec-item:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--bg-card-hover);
       border-color: var(--border-hover);
       transform: translateY(-2px);
     }
@@ -1520,16 +1750,19 @@
     }
 
     .neon-spec-item h4 {
+      font-family: var(--font-display);
       font-size: 14.5px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       color: var(--text-pri);
       margin-bottom: 4px;
     }
 
     .neon-spec-item p {
+      font-family: var(--font-body);
       font-size: 12.5px;
       color: var(--text-sec);
-      line-height: 1.45;
+      line-height: 1.5;
       margin: 0;
     }
 
@@ -1544,30 +1777,80 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 22px;
-      border-radius: var(--radius-btn);
+      padding: 13px 24px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
       font-size: 14px;
       font-weight: 600;
+      letter-spacing: -0.01em;
       text-decoration: none;
       cursor: pointer;
-      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: all 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
+    /* Liquid Glass Neon Primary Button */
     .btn-neon-primary {
-      background: linear-gradient(135deg, #4285F4, #9B72CF);
-      color: #FFF;
-      border: none;
-      box-shadow: 0 4px 20px rgba(66, 133, 244, 0.35);
+      position: relative;
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.92), rgba(155, 114, 207, 0.92));
+      color: #FFF !important;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.25),
+        0 6px 24px rgba(66, 133, 244, 0.4);
+      overflow: hidden;
+    }
+
+    .btn-neon-primary::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: inherit;
+      pointer-events: none;
     }
 
     .btn-neon-primary:hover {
-      box-shadow: 0 6px 28px rgba(155, 114, 207, 0.5);
       transform: translateY(-2px);
+      box-shadow: 
+        inset 0 2px 1.5px rgba(255, 255, 255, 0.85),
+        0 10px 32px rgba(155, 114, 207, 0.55);
     }
 
+    /* Liquid Glass Neon Secondary Button */
     .btn-neon-secondary {
-      background: var(--btn-sec-bg);
-      border: 1px solid var(--btn-sec-border);
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--text-pri);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        0 4px 16px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+    }
+
+    html[data-theme="light"] .btn-neon-secondary {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(240, 244, 250, 0.58) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        0 3px 12px rgba(60, 64, 67, 0.08);
+    }
+
+    .btn-neon-secondary:hover {
+      transform: translateY(-2px);
+      border-color: rgba(155, 114, 207, 0.45);
+      box-shadow: 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+        0 8px 22px rgba(0, 0, 0, 0.25);
+    }
       color: var(--btn-sec-text);
     }
 
@@ -2287,11 +2570,15 @@
     // BUTTER-SMOOTH DARK / LIGHT THEME TOGGLE WITH VIEW TRANSITION
     // ============================================================
     function toggleTheme(event) {
+      if (event) {
+        try {
+          event.preventDefault();
+          event.stopPropagation();
+        } catch(_) {}
+      }
       const html = document.documentElement;
-      const currentTheme = html.getAttribute("data-theme") || "dark";
+      const currentTheme = html.getAttribute("data-theme") === "light" ? "light" : "dark";
       const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-      const isReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const applyTheme = () => {
         html.setAttribute("data-theme", newTheme);
@@ -2305,50 +2592,41 @@
           metaTheme.setAttribute("content", newTheme === "dark" ? "#07080B" : "#F8F9FE");
         }
 
+        // Notify neon simulator iframe if present
+        const neonFrame = document.getElementById("neonFrame");
+        if (neonFrame && neonFrame.contentWindow) {
+          try {
+            neonFrame.contentWindow.postMessage({ action: "theme", theme: newTheme }, "*");
+          } catch(_) {}
+        }
+
         // Re-render liquid glass if active
-        if (typeof window.__liquidGLRenderer__?.render === "function") {
-          window.__liquidGLRenderer__.render();
+        if (window.__liquidGLRenderer__ && typeof window.__liquidGLRenderer__.render === "function") {
+          try { window.__liquidGLRenderer__.render(); } catch(_) {}
         }
       };
 
-      // Native circular ripple reveal using View Transition API
-      if (document.startViewTransition && !isReducedMotion) {
-        const btn = document.getElementById("themeToggleBtn");
-        const rect = (btn && btn.getBoundingClientRect) ? btn.getBoundingClientRect() : { left: window.innerWidth / 2, top: 40, width: 0, height: 0 };
-        const x = event && event.clientX ? event.clientX : (rect.left + rect.width / 2);
-        const y = event && event.clientY ? event.clientY : (rect.top + rect.height / 2);
-        const endRadius = Math.hypot(
-          Math.max(x, window.innerWidth - x),
-          Math.max(y, window.innerHeight - y)
-        );
+      html.classList.add("theme-transitioning");
 
-        const transition = document.startViewTransition(() => {
+      if (document.startViewTransition && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+        try {
+          const transition = document.startViewTransition(() => {
+            applyTheme();
+          });
+          transition.finished.finally(() => {
+            html.classList.remove("theme-transitioning");
+          });
+          return;
+        } catch (e) {
           applyTheme();
-        });
-
-        transition.ready.then(() => {
-          document.documentElement.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`
-              ]
-            },
-            {
-              duration: 480,
-              easing: "cubic-bezier(0.2, 0.0, 0, 1.0)",
-              pseudoElement: "::view-transition-new(root)"
-            }
-          );
-        });
+        }
       } else {
-        // Fallback: Silky 450ms CSS transition across all color, surface, and border properties
-        html.classList.add("theme-transitioning");
         applyTheme();
-        setTimeout(() => {
-          html.classList.remove("theme-transitioning");
-        }, 480);
       }
+
+      setTimeout(() => {
+        html.classList.remove("theme-transitioning");
+      }, 420);
     }
 
     // Theme Switcher for Keyboard Simulator
