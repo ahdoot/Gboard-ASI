@@ -1294,6 +1294,319 @@
       color: var(--text-pri);
     }
 
+    /* ============================================================
+       NEON MEDIUM LIVE EXPERIENCE SHOWCASE
+       ============================================================ */
+    .neon-showcase-section {
+      padding: 90px 0 110px;
+      position: relative;
+    }
+
+    .neon-showcase-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-top: 48px;
+    }
+
+    /* Device Mockup Wrapper */
+    .device-stage-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .device-phone-frame {
+      position: relative;
+      width: 390px;
+      height: 820px;
+      border-radius: 50px;
+      background: #000;
+      padding: 12px;
+      box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        0 25px 70px -15px rgba(0, 0, 0, 0.9),
+        0 0 50px rgba(66, 133, 244, 0.25),
+        0 0 100px rgba(155, 114, 207, 0.18);
+      border: 4px solid #1a1e2e;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+    }
+
+    .device-phone-frame:hover {
+      box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.25),
+        0 30px 85px -10px rgba(0, 0, 0, 0.95),
+        0 0 65px rgba(66, 133, 244, 0.35),
+        0 0 120px rgba(155, 114, 207, 0.28);
+    }
+
+    .device-screen-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 40px;
+      display: block;
+      background: #04060c;
+    }
+
+    /* Phone reflection shine overlay */
+    .device-phone-frame::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 60%, transparent 100%);
+      pointer-events: none;
+      z-index: 10;
+      border-top-left-radius: 46px;
+      border-top-right-radius: 46px;
+    }
+
+    /* Control Console & Feature Highlights */
+    .neon-console-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 36px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    .console-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .console-live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: rgba(30, 163, 98, 0.15);
+      border: 1px solid rgba(30, 163, 98, 0.3);
+      color: #34A853;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .console-live-pill .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34A853;
+      box-shadow: 0 0 8px #34A853;
+      animation: neonPulse 1.8s infinite;
+    }
+
+    @keyframes neonPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .console-fps-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: rgba(66, 133, 244, 0.15);
+      border: 1px solid rgba(66, 133, 244, 0.3);
+      color: #8AB4F8;
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .neon-console-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-pri);
+    }
+
+    .neon-console-desc {
+      color: var(--text-sec);
+      font-size: 15.5px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* Quick Interactive Phrases */
+    .phrase-chips-group {
+      margin-bottom: 30px;
+    }
+
+    .phrase-chips-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-ter);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .phrase-chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .phrase-chip {
+      padding: 9px 16px;
+      border-radius: 14px;
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      color: var(--text-pri);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .phrase-chip:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(155, 114, 207, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3), 0 0 14px rgba(155, 114, 207, 0.2);
+    }
+
+    .phrase-chip:active {
+      transform: scale(0.96);
+    }
+
+    /* Feature highlights inside console */
+    .neon-spec-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .neon-spec-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.25s ease;
+    }
+
+    .neon-spec-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .neon-spec-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .neon-spec-item h4 {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-pri);
+      margin-bottom: 4px;
+    }
+
+    .neon-spec-item p {
+      font-size: 12.5px;
+      color: var(--text-sec);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* Console Action Buttons */
+    .neon-action-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-neon-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .btn-neon-primary {
+      background: linear-gradient(135deg, #4285F4, #9B72CF);
+      color: #FFF;
+      border: none;
+      box-shadow: 0 4px 20px rgba(66, 133, 244, 0.35);
+    }
+
+    .btn-neon-primary:hover {
+      box-shadow: 0 6px 28px rgba(155, 114, 207, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-neon-secondary {
+      background: var(--btn-sec-bg);
+      border: 1px solid var(--btn-sec-border);
+      color: var(--btn-sec-text);
+    }
+
+    .btn-neon-secondary:hover {
+      background: var(--btn-sec-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 992px) {
+      .neon-showcase-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .neon-console-card {
+        max-width: 600px;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .device-phone-frame {
+        width: 100%;
+        max-width: 360px;
+        height: 740px;
+        border-radius: 38px;
+        padding: 8px;
+      }
+      .device-screen-iframe {
+        border-radius: 30px;
+      }
+      .neon-spec-list {
+        grid-template-columns: 1fr;
+      }
+      .neon-console-card {
+        padding: 24px;
+      }
+    }
+
     /* Accessibility reduced-motion */
     @media (prefers-reduced-motion: reduce) {
       .nebula-glow, .sparkle-icon, .gemini-pill {
@@ -1320,6 +1633,7 @@
       </a>
       <ul class="nav-menu">
         <li class="nav-item"><a href="#overview">Overview</a></li>
+        <li class="nav-item"><a href="#live-demo">Live Demo</a></li>
         <li class="nav-item"><a href="#features">Features</a></li>
         <li class="nav-item"><a href="#studio">Studio</a></li>
         <li class="nav-item"><a href="#comparison">Compare</a></li>
@@ -1373,8 +1687,12 @@
           <span>Download Gboard Pro APK</span>
           <span style="font-size: 13px; opacity: 0.85;">(v2.1.1 • 129 MB)</span>
         </a>
+        <a href="#live-demo" class="btn-secondary" style="border-color: rgba(155, 114, 207, 0.45); background: rgba(155, 114, 207, 0.12);">
+          <span style="color: var(--gemini-purple);">✦</span>
+          <span>Try Live Keyboard Demo</span>
+        </a>
         <a href="https://github.com/smartworldarafath/Gboard_Pro" class="btn-secondary">
-          <span>View on GitHub</span>
+          <span>GitHub</span>
           <span>★</span>
         </a>
       </div>
@@ -1500,6 +1818,125 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- Neon Medium Live Experience Showcase -->
+  <section class="container neon-showcase-section" id="live-demo">
+    <div class="section-header">
+      <div class="section-eyebrow">
+        <span class="sparkle-icon">✦</span>
+        <span>Liquid Glass Experience</span>
+      </div>
+      <h2 class="section-title">
+        Feel the <span class="hero-gradient-text">Neon Medium</span> Flow
+      </h2>
+      <p class="section-desc">
+        Touch, type, or press keys on your physical keyboard to interact with the live Gboard Pro simulator in real time. Experience liquid glass keycaps, multi-layer ambient neon radiance, and tactile haptic feedback running at a locked 60 FPS.
+      </p>
+    </div>
+
+    <div class="neon-showcase-grid">
+      <!-- Device Mockup Viewport -->
+      <div class="device-stage-wrapper">
+        <div class="device-phone-frame">
+          <iframe 
+            src="neon.html" 
+            id="neonFrame" 
+            class="device-screen-iframe" 
+            title="Gboard Pro Neon Medium Live Keyboard Demo" 
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Interactive Control Console & Specifications -->
+      <div class="neon-console-card">
+        <div class="console-badge-row">
+          <span class="console-live-pill">
+            <span class="pulse-dot"></span>
+            Live Simulator Active
+          </span>
+          <span class="console-fps-pill">
+            ⚡ Locked 60 FPS
+          </span>
+          <span class="console-fps-pill" style="color: #C58AF9; border-color: rgba(197, 138, 249, 0.3); background: rgba(197, 138, 249, 0.1);">
+            🎨 Liquid Glass UI
+          </span>
+        </div>
+
+        <h3 class="neon-console-title">Interactive Keyboard Studio</h3>
+        <p class="neon-console-desc">
+          Test out real-time tactile typing right here. Click on any phrase below to instantly inject it into the live phone simulator, or tap keys directly inside the phone screen. Laptop & desktop physical keyboard input is fully synchronized!
+        </p>
+
+        <!-- Quick Phrase Injector -->
+        <div class="phrase-chips-group">
+          <div class="phrase-chips-label">
+            <span>⚡ Quick Phrase Presets</span>
+          </div>
+          <div class="phrase-chips-list">
+            <button class="phrase-chip" onclick="injectPhrase('Pixel Gemini Rambler')">
+              <span>🎙️</span>
+              <span>Gemini Rambler Voice</span>
+            </button>
+            <button class="phrase-chip" onclick="injectPhrase('Liquid Glass Keycaps')">
+              <span>💎</span>
+              <span>Liquid Glass Keycaps</span>
+            </button>
+            <button class="phrase-chip" onclick="injectPhrase('Arafath Rahman Gboard Pro')">
+              <span>👑</span>
+              <span>Arafath Rahman</span>
+            </button>
+            <button class="phrase-chip" onclick="injectPhrase('Butter-smooth 60 FPS')">
+              <span>⚡</span>
+              <span>60 FPS Animation</span>
+            </button>
+            <button class="phrase-chip" onclick="injectPhrase('Material 3 Expressive')">
+              <span>🎨</span>
+              <span>Material 3 Expressive</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Spec Cards -->
+        <div class="neon-spec-list">
+          <div class="neon-spec-item">
+            <div class="neon-spec-icon">🌈</div>
+            <h4>Rainbow Neon Aura</h4>
+            <p>Dual flowing gradient waves with bottom blur reflection that pulse smoothly without battery drain.</p>
+          </div>
+          <div class="neon-spec-item">
+            <div class="neon-spec-icon">🎧</div>
+            <h4>Tactile Audio Clicks</h4>
+            <p>Synthesized WebAudio micro-pulses and vibration API for an authentic physical keyboard feel.</p>
+          </div>
+          <div class="neon-spec-item">
+            <div class="neon-spec-icon">⌨️</div>
+            <h4>Physical Key Sync</h4>
+            <p>Press any key on your laptop/PC keyboard to type live into the simulator with ripple animations.</p>
+          </div>
+          <div class="neon-spec-item">
+            <div class="neon-spec-icon">💎</div>
+            <h4>Specular Rim Shaders</h4>
+            <p>140-degree directional glass reflection rim with depth layered keycap elevation.</p>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="neon-action-row">
+          <a href="neon.html" target="_blank" class="btn-neon-action btn-neon-primary" title="Open Fullscreen Neon Experience">
+            <span>⛶ Launch Fullscreen Mode</span>
+            <span>↗</span>
+          </a>
+          <button class="btn-neon-action btn-neon-secondary" id="soundToggleBtn" onclick="toggleSimulatorSound()" title="Toggle tactile key sound">
+            <span>🔊 Sound: ON</span>
+          </button>
+          <button class="btn-neon-action btn-neon-secondary" onclick="clearSimulatorText()" title="Clear simulator text">
+            <span>🗑️ Clear Screen</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -1966,6 +2403,34 @@
       } else if (type === "clipboard") {
         badge.innerText = "📋 24h Clipboard (100 items)";
         setTimeout(() => { badge.innerText = "✦ Gemini Active"; }, 2000);
+      }
+    }
+
+    // Neon Simulator Remote Integration
+    function injectPhrase(phrase) {
+      var frame = document.getElementById("neonFrame");
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ action: "type", text: phrase }, "*");
+      }
+    }
+
+    function clearSimulatorText() {
+      var frame = document.getElementById("neonFrame");
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ action: "clear" }, "*");
+      }
+    }
+
+    var simSoundOn = true;
+    function toggleSimulatorSound() {
+      simSoundOn = !simSoundOn;
+      var btn = document.getElementById("soundToggleBtn");
+      if (btn) {
+        btn.innerHTML = simSoundOn ? "<span>🔊 Sound: ON</span>" : "<span>🔇 Sound: OFF</span>";
+      }
+      var frame = document.getElementById("neonFrame");
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ action: "toggleSound" }, "*");
       }
     }
 

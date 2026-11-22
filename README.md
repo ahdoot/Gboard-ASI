@@ -49,6 +49,10 @@
   <a href="LICENSE" title="GPL-3.0 License"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-gpl.svg"><img src="assets/readme/light/badge-gpl.svg" alt="GNU GPLv3 Open Source" height="28"></picture></a>
 </p>
 
+<p align="center">
+  🌐 <b>Live Interactive Showcase &amp; Neon Studio:</b> <a href="https://smartworldarafath.github.io/Gboard_Pro/">smartworldarafath.github.io/Gboard_Pro</a> &bull; <a href="https://smartworldarafath.github.io/Gboard_Pro/neon.html">Try Neon Medium Live Demo &rarr;</a>
+</p>
+
 </div>
 
 ---
