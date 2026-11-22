@@ -27,6 +27,7 @@ input/splits*/
 scratch/
 
 temp_decompiled/
+temp_decompiled_1841/
 build_classes/
 tools/*.jar
 tools/*.keystore

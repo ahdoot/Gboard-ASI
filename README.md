@@ -39,7 +39,7 @@
 
 <p align="center">
   <a href="#installation" title="Zero Root Required"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-nonroot.svg"><img src="assets/readme/light/badge-nonroot.svg" alt="Zero Root Needed" height="28"></picture></a>
-  <a href="https://github.com/smartworldarafath/Gboard_Pro/releases/latest" title="Latest Stable Release v2.1.0"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-version.svg"><img src="assets/readme/light/badge-version.svg" alt="Latest Version v2.1.0" height="28"></picture></a>
+  <a href="https://github.com/smartworldarafath/Gboard_Pro/releases/latest" title="Latest Stable Release v2.1.1"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-version.svg"><img src="assets/readme/light/badge-version.svg" alt="Latest Version v2.1.1" height="28"></picture></a>
   <a href="#specs" title="Android 10 - 16 Compatibility"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-android.svg"><img src="assets/readme/light/badge-android.svg" alt="Android 10 - 16" height="28"></picture></a>
   <a href="#specs" title="arm64-v8a Architecture"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-arm64.svg"><img src="assets/readme/light/badge-arm64.svg" alt="arm64-v8a Architecture" height="28"></picture></a>
   <a href="#dictation" title="Gemini Rambler Voice Dictation"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme/dark/badge-rambler.svg"><img src="assets/readme/light/badge-rambler.svg" alt="Gemini Rambler Voice Typing" height="28"></picture></a>
@@ -55,13 +55,13 @@
 
 <div align="center">
 
-## 📦 Download Gboard Pro APK (`v2.1.0` • Latest Stable)
+## 📦 Download Gboard Pro APK (`v2.1.1` • Latest Stable)
 
 | Artifact | Format | Description & Usage |
 | :--- | :--- | :--- |
 | [**Gboard_Pro.apk**](https://github.com/smartworldarafath/Gboard_Pro/releases/latest/download/Gboard_Pro.apk) | **Signed Release APK** *(Recommended)* | **Ready to install.** Universal `arm64-v8a` pre-signed APK. Installs and runs independently alongside official system Gboard (`com.gboardpro.app`). |
 | [**All Release Assets**](https://github.com/smartworldarafath/Gboard_Pro/releases/latest) | **GitHub Releases Hub** | View detailed changelog, SHA-256 checksums, and historical builds. |
-| [**Official Base APK**](https://www.apkmirror.com/apk/google-inc/gboard/gboard-the-google-keyboard-18-4-1-985164140-release/) | **Unmodified Gboard Base** | Google Gboard `18.4.1.985164140-release-arm64-v8a` from APKMirror. |
+| [**Official Base APK**](https://www.apkmirror.com/apk/google-inc/gboard/gboard-the-google-keyboard-18-6-3-1002251336-release/) | **Unmodified Gboard Base** | Google Gboard `18.6.3.1002251336-release-arm64-v8a` from APKMirror. |
 
 </div>
 
@@ -113,8 +113,8 @@ Because **Gboard Pro** operates under a dedicated, standalone application namesp
   </thead>
   <tbody>
     <tr><td><b>Application Name</b></td><td><b>Gboard Pro</b> (Enhanced Google Keyboard Mod)</td></tr>
-    <tr><td><b>Latest Version</b></td><td><b>v2.1.0 (Stable Release)</b></td></tr>
-    <tr><td><b>Base Package</b></td><td>Google Gboard <code>18.4.1.985164140-release-arm64-v8a</code></td></tr>
+    <tr><td><b>Latest Version</b></td><td><b>v2.1.1 (Stable Release)</b></td></tr>
+    <tr><td><b>Base Package</b></td><td>Google Gboard <code>18.6.3.1002251336-release-arm64-v8a</code></td></tr>
     <tr><td><b>Package Identifier</b></td><td><code>com.gboardpro.app</code> (Coexists alongside stock Gboard)</td></tr>
     <tr><td><b>Android Compatibility</b></td><td>Android 10 (API 29), 11, 12, 12L, 13, 14, 15, and Android 16+</td></tr>
     <tr><td><b>Architecture</b></td><td><code>arm64-v8a</code> (Modern 64-bit Android smartphones & tablets)</td></tr>
@@ -344,8 +344,8 @@ adb shell am force-stop com.gboardpro.app
   </thead>
   <tbody>
     <tr><td><b>Application Identifier</b></td><td><code>com.gboardpro.app</code> (Isolated namespace)</td></tr>
-    <tr><td><b>Current Version</b></td><td><code>v2.1.0</code> (Stable Release)</td></tr>
-    <tr><td><b>Base Gboard Build</b></td><td><code>18.4.1.985164140-release-arm64-v8a</code></td></tr>
+    <tr><td><b>Current Version</b></td><td><code>v2.1.1</code> (Stable Release)</td></tr>
+    <tr><td><b>Base Gboard Build</b></td><td><code>18.6.3.1002251336-release-arm64-v8a</code></td></tr>
     <tr><td><b>CPU Architecture</b></td><td><code>arm64-v8a</code> (64-bit ARM processors)</td></tr>
     <tr><td><b>Minimum OS Version</b></td><td>Android 10 (API 29)</td></tr>
     <tr><td><b>Target / Tested OS</b></td><td>Android 12L (API 32) through Android 16</td></tr>
@@ -517,7 +517,7 @@ Always download Gboard Pro directly from the official [GitHub Releases](https://
         "priceCurrency": "USD"
       },
       "description": "Gboard Pro is an advanced, privacy-conscious Google Keyboard (Gboard) mod for Android. It unlocks Pixel Gemini Rambler voice typing, on-device AI writing tools, Material 3 Expressive dynamic color themes, AMOLED Pure Black mode, and 24-hour extended clipboard history without root.",
-      "softwareVersion": "2.1.0",
+      "softwareVersion": "2.1.1",
       "downloadUrl": "https://github.com/smartworldarafath/Gboard_Pro/releases/latest/download/Gboard_Pro.apk",
       "url": "https://github.com/smartworldarafath/Gboard_Pro",
       "author": {
