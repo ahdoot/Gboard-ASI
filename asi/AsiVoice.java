@@ -167,6 +167,7 @@ public final class AsiVoice {
     }
 
     private void refresh() {
+        updateMic();
         String label = editor == null ? "Dictate" : locked ? "Mic locked · Stop"
                 : session != null && session.stopping ? "Finishing…" : "Listening · Stop";
         chip.setText(label);
@@ -174,6 +175,11 @@ public final class AsiVoice {
                 : locked ? "Microphone locked. Tap to stop dictation" : "Stop dictation");
         chip.setVisibility((inCall || editor != null) && canDictate() ? View.VISIBLE : View.GONE);
         frame.requestLayout();
+    }
+
+    private void updateMic() {
+        MicIndicator.setListening(editor != null && (locked || (session != null && session.ready
+                && !session.stopping && !session.speechEnded)));
     }
 
     /** Pin the button at the keyboard edge. Limit extra touch ownership to the chip. */
@@ -327,6 +333,8 @@ public final class AsiVoice {
         final long started = SystemClock.uptimeMillis();
         final Runnable timeout = this::timedOut;
         boolean stopping;
+        boolean ready;
+        boolean speechEnded;
 
         Session(SpeechRecognizer recognizer) {
             this.recognizer = recognizer;
@@ -394,9 +402,22 @@ public final class AsiVoice {
             return words == null || words.isEmpty() || words.get(0) == null ? "" : words.get(0).trim();
         }
 
-        public void onReadyForSpeech(Bundle params) { if (session == this && !stopping) arm(20000); }
-        public void onBeginningOfSpeech() { if (session == this && !stopping) arm(120000); }
-        public void onEndOfSpeech() { if (session == this && !stopping) arm(8000); }
+        private void listening(long timeoutMs) {
+            if (session != this || stopping || speechEnded) return;
+            if (!ready) {
+                ready = true;
+                updateMic();
+            }
+            arm(timeoutMs);
+        }
+        public void onReadyForSpeech(Bundle params) { listening(20000); }
+        public void onBeginningOfSpeech() { listening(120000); }
+        public void onEndOfSpeech() {
+            if (session != this || stopping) return;
+            speechEnded = true;
+            updateMic();
+            arm(8000);
+        }
         public void onPartialResults(Bundle data) {
             if (session != this || stopping) return;
             if (!sameEditor()) { end(); return; }
@@ -404,7 +425,7 @@ public final class AsiVoice {
                 fail("Dictation stopped because the insertion point changed.");
                 return;
             }
-            arm(120000);
+            listening(120000);
         }
         public void onResults(Bundle data) { complete(first(data)); }
         public void onError(int error) {

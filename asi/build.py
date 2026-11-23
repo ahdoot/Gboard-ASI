@@ -102,12 +102,42 @@ def hook_header(smali):
 '''
 
 
+def hook_mic_keys(smali):
+    indicator = 'Llocal/gboard/asi/MicIndicator;'
+    clear = f'    invoke-static {{p1, p0}}, {indicator}->unbind(Landroid/view/View;Ljava/lang/Object;)V'
+    smali = change_method(smali, 'k(Landroid/view/View;Z)V', lambda m: prologue(m, clear))
+    old_view = f'''
+    iget-object v0, p0, Lmng;->a:Landroid/view/View;
+    if-eq v0, p2, :asi_same_key
+    invoke-static {{v0, p0}}, {indicator}->unbind(Landroid/view/View;Ljava/lang/Object;)V
+    :asi_same_key'''
+    # The model is authoritative even for toolbar keys whose SoftKeyDef wraps the tap.
+    bind = f'''    sget-object v0, Lpti;->a:Lpti;
+    invoke-virtual {{p0, v0}}, Lmng;->e(Lpti;)Lcom/google/android/libraries/inputmethod/metadata/ActionDef;
+    move-result-object v0
+    const/4 v1, 0x0
+    if-eqz v0, :asi_bind
+    iget-object v0, v0, Lcom/google/android/libraries/inputmethod/metadata/ActionDef;->d:[Lpue;
+    if-eqz v0, :asi_bind
+    array-length p3, v0
+    if-eqz p3, :asi_bind
+    aget-object v0, v0, v1
+    if-eqz v0, :asi_bind
+    iget v1, v0, Lpue;->c:I
+    :asi_bind
+    iget-object v0, p0, Lmng;->b:Ljava/lang/String;
+    invoke-static {{p2, p0, v0, v1}}, {indicator}->bind(Landroid/view/View;Ljava/lang/Object;Ljava/lang/String;I)V
+    return-void'''
+    return change_method(smali, 'l(Lmnj;Landroid/view/View;Z)V',
+                         lambda m: prologue(m, old_view).replace('    return-void', bind))
+
+
 def bump_version(data):
     # The root AndroidManifest.xml versionCode is one typed integer in the pinned binary XML.
     old = struct.pack('<HBBI', 8, 0, 0x10, 176071770)
     if data.count(old) != 1:
         raise ValueError('Expected exactly one upstream versionCode')
-    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071772))
+    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071773))
 
 
 def rename(data, old, new):
@@ -131,7 +161,7 @@ def repackage(source, output, patched_dex, extension):
                 data = rename(data, 'com.gboardpro.app', 'com.gboardpro.asi')
                 if name == 'AndroidManifest.xml':
                     data = rename(data, 'Gboard Pro', 'Gboard ASI')
-                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.3'))
+                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.4'))
                 if name == 'classes.dex':
                     body = hashlib.sha1(data[32:]).digest() + data[32:]
                     data = data[:8] + struct.pack('<I', zlib.adler32(body)) + body
@@ -176,6 +206,8 @@ def main():
         ime_file.write_text(hook_ime(ime_file.read_text()))
         holder = t / 'decoded/smali/com/google/android/libraries/inputmethod/keyboard/impl/KeyboardViewHolder.smali'
         holder.write_text(hook_header(holder.read_text()))
+        keys = t / 'decoded/smali/mng.smali'
+        keys.write_text(hook_mic_keys(keys.read_text()))
         run(*apktool, 'b', '-j', '2', '-o', t / 'edited.zip', t / 'decoded')
         with zipfile.ZipFile(t / 'edited.zip') as edited:
             repackage(args.base, t / 'unsigned.apk', edited.read('classes.dex'), t / 'classes.dex')
