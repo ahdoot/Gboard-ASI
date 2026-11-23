@@ -66,11 +66,40 @@ def hook_ime(smali):
         op = 'show' if name.startswith(('onStartInputView', 'onWindowShown')) else 'hide'
         insn = f'    invoke-static/range {{p0 .. p0}}, {BRIDGE}->{op}({IME})V'
         smali = change_method(smali, name, lambda m: prologue(m, insn))
-    select = f'    invoke-static/range {{p0 .. p4}}, {BRIDGE}->selection({IME}IIII)V'
+    # Gboard's own composer does not own the ASI composing span. Let the framework
+    # see our preview echoes without asking the separate Gboard composer to reset it.
+    select = f'''    invoke-static/range {{p0 .. p6}}, {BRIDGE}->selection({IME}IIIIII)Z
+    move-result v0
+    if-eqz v0, :asi_stock_selection
+    invoke-super/range {{p0 .. p6}}, {IME}->onUpdateSelection(IIIIII)V
+    return-void
+    :asi_stock_selection'''
     smali = change_method(smali, 'onUpdateSelection(IIIIII)V', lambda m: prologue(m, select))
     insets = f'    invoke-static/range {{p0 .. p1}}, {BRIDGE}->place({IME}Landroid/inputmethodservice/InputMethodService$Insets;)V'
     return change_method(smali, 'onComputeInsets(Landroid/inputmethodservice/InputMethodService$Insets;)V',
                          lambda m: m.replace('    return-void', insets + '\n    return-void'))
+
+
+def hook_header(smali):
+    # All inflated and dynamically replaced headers have this common holder.
+    if '.method protected onAttachedToWindow()V' in smali or '->onMeasure(II)V' not in smali:
+        raise ValueError('Unexpected keyboard holder')
+    return smali + f'''
+.method protected onAttachedToWindow()V
+    .locals 0
+    invoke-super {{p0}}, Ltdb;->onAttachedToWindow()V
+    invoke-static {{p0}}, {BRIDGE}->reserveToolbarSpace(Landroid/view/View;)V
+    return-void
+.end method
+'''
+
+
+def bump_version(data):
+    # The root AndroidManifest.xml versionCode is one typed integer in the pinned binary XML.
+    old = struct.pack('<HBBI', 8, 0, 0x10, 176071770)
+    if data.count(old) != 1:
+        raise ValueError('Expected exactly one upstream versionCode')
+    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071771))
 
 
 def rename(data, old, new):
@@ -94,7 +123,7 @@ def repackage(source, output, patched_dex, extension):
                 data = rename(data, 'com.gboardpro.app', 'com.gboardpro.asi')
                 if name == 'AndroidManifest.xml':
                     data = rename(data, 'Gboard Pro', 'Gboard ASI')
-                    data = rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.1')
+                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.2'))
                 if name == 'classes.dex':
                     body = hashlib.sha1(data[32:]).digest() + data[32:]
                     data = data[:8] + struct.pack('<I', zlib.adler32(body)) + body
@@ -120,11 +149,11 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
-        java_source = Path(__file__).with_name('AsiVoice.java')
+        sources = sorted(Path(__file__).parent.glob('*.java'))
         compiler = (['java', '-jar', args.ecj] if args.ecj else ['javac'])
         (t / 'classes').mkdir()
         run(*compiler, '-source', '8', '-target', '8', '-proc:none', '-classpath', args.android_jar,
-            '-d', t / 'classes', java_source)
+            '-d', t / 'classes', *sources)
         with zipfile.ZipFile(t / 'classes.jar', 'w') as z:
             for file in (t / 'classes').rglob('*.class'):
                 z.write(file, file.relative_to(t / 'classes'))
@@ -137,6 +166,8 @@ def main():
         run(*apktool, 'd', '-r', '-j', '2', '-o', t / 'decoded', t / 'input.zip')
         ime_file = t / 'decoded/smali/pbb.smali'
         ime_file.write_text(hook_ime(ime_file.read_text()))
+        holder = t / 'decoded/smali/com/google/android/libraries/inputmethod/keyboard/impl/KeyboardViewHolder.smali'
+        holder.write_text(hook_header(holder.read_text()))
         run(*apktool, 'b', '-j', '2', '-o', t / 'edited.zip', t / 'decoded')
         with zipfile.ZipFile(t / 'edited.zip') as edited:
             repackage(args.base, t / 'unsigned.apk', edited.read('classes.dex'), t / 'classes.dex')

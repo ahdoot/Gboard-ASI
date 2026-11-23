@@ -1,6 +1,6 @@
 # Gboard ASI
 
-This Pixel-focused fork routes keyboard dictation through **Android System Intelligence** and adds a **Dictate** button during calls. It has its own Android app ID and installs alongside stock Gboard.
+This Pixel-focused fork routes keyboard dictation through **Android System Intelligence** with live text in the active field. Double-tap the microphone to dictate across pauses, or use **Dictate** during calls. It has its own Android app ID and installs alongside stock Gboard.
 
 For setup, the call test, and the fork build command, see [Gboard ASI](asi/README.md). The download links in the upstream documentation below point to the original Gboard Pro release.
 

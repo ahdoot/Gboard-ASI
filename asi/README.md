@@ -1,13 +1,14 @@
 # Build Gboard ASI
 
-This variant calls the exported Android speech recognition service in the Pixel system package `com.google.android.as`. The keyboard requests recognition on a mic tap and commits the final result into the active text field. The call-mode button is shown inside the keyboard window and uses the same recognizer. Audio capture and call routing are managed by Android and the selected service.
+This variant calls the exported Android speech recognition service in the Pixel system package `com.google.android.as`. The keyboard displays interim words as composing text in the active editor and applies the final wording once. The call-mode button is shown inside the keyboard window and uses the same recognizer. Audio capture and call routing are managed by Android and the selected service.
 
 ## Install and check
 
-1. Install the signed Gboard ASI APK. Enable and select **Gboard ASI** in Android's on-screen keyboard settings.
+1. Install the signed Gboard ASI APK over your existing Gboard ASI. For a fresh installation, enable and select **Gboard ASI** in Android's on-screen keyboard settings.
 2. In app permissions, allow **Microphone** while using the app.
-3. Dictate a short phrase in a text field with the toolbar mic. Start a phone call, return to the same field, and tap **Dictate**. Try the same audio route used for your comparison keyboard.
-4. Partial results appear on the button. Pause or tap again to finish. The final phrase is inserted into the active field. Changing fields cancels an active session. A recognition error displays the service's error number.
+3. Tap the toolbar mic once to dictate one phrase. Editors with composing-text support show ASI's interim words at the cursor as they arrive. ASI may revise those words. The blue button shows microphone status.
+4. Double-tap the toolbar mic to lock dictation. After a phrase or silence, the keyboard starts another ASI request in the same field. Tap the mic or **Mic locked · Stop** to finish. Moving the cursor or leaving the field ends dictation.
+5. Try the same gestures during a call using **Dictate**. The keyboard reserves 52 dp at the right of the toolbar for your floating button. Position the floating button using its own drag control.
 
 ## Build the signed APK
 
@@ -20,7 +21,7 @@ curl -fL https://github.com/smartworldarafath/Gboard_Pro/releases/download/v2.1.
 python3 asi/build.py --base Gboard_Pro.apk \
   --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
   --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
-  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.1.apk
+  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.2.apk
 ```
 
 The fork has its own application ID, `com.gboardpro.asi`. Its manifest explicitly queries the Pixel system package. Signing and 16 KiB APK alignment are verified at the end of the build. Live call behavior needs verification on a physical Pixel.

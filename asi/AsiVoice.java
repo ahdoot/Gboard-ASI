@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognitionService;
@@ -26,9 +27,13 @@ import android.speech.SpeechRecognizer;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.ExtractedText;
+import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.FrameLayout;
@@ -51,10 +56,23 @@ public final class AsiVoice {
     private Runnable unregister;
     private Session session;
     private boolean inCall;
+    private boolean locked;
+    private long firstTap = -1;
+    private ComponentName provider;
+    private InputConnection editor;
+    private DictatedText text;
+    private int seenStart, seenEnd;
+    private int busyRetries;
+    private int shortSilences;
+    private final Runnable restart = this::beginSegment;
+    private static final int FLOW_SPACE_DP = 52;
 
     private AsiVoice(InputMethodService ime, FrameLayout frame) {
         this.ime = ime;
         this.frame = frame;
+        EditorInfo info = ime.getCurrentInputEditorInfo();
+        seenStart = info == null ? -1 : info.initialSelStart;
+        seenEnd = info == null ? -1 : info.initialSelEnd;
         audio = ime.getSystemService(AudioManager.class);
         chip = new TextView(ime);
         chip.setTextColor(Color.WHITE);
@@ -72,7 +90,7 @@ public final class AsiVoice {
         bg.setColor(0xff384469);
         chip.setBackground(bg);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(-2, dp(44), Gravity.TOP | Gravity.RIGHT);
-        lp.rightMargin = dp(6);
+        lp.rightMargin = dp(FLOW_SPACE_DP + 6);
         frame.addView(chip, lp);
         if (audio != null) {
             if (Build.VERSION.SDK_INT >= 31) {
@@ -87,6 +105,24 @@ public final class AsiVoice {
 
     private int dp(int value) {
         return Math.round(value * ime.getResources().getDisplayMetrics().density);
+    }
+
+    /** Apply a real margin to the toolbar row so Gboard lays out its own keys and hit boxes. */
+    public static void reserveToolbarSpace(View view) {
+        // keyboard_header_view_holder in the verified upstream APK.
+        if (view.getId() != 0x7f0b05e8) return;
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (!(params instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) params;
+        int gap = Math.round(FLOW_SPACE_DP * view.getResources().getDisplayMetrics().density);
+        if (lp.isMarginRelative()) {
+            if (view.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
+                lp.setMarginStart(Math.max(lp.getMarginStart(), gap));
+            else
+                lp.setMarginEnd(Math.max(lp.getMarginEnd(), gap));
+        }
+        lp.rightMargin = Math.max(lp.rightMargin, gap);
+        view.setLayoutParams(lp);
     }
 
     public static void show(InputMethodService ime) {
@@ -104,7 +140,7 @@ public final class AsiVoice {
         AsiVoice old = visible;
         if (old == null || old.ime != ime) return;
         visible = null;
-        if (old.session != null) old.session.close();
+        old.end();
         if (old.unregister != null) old.unregister.run();
         old.frame.removeView(old.chip);
     }
@@ -127,9 +163,12 @@ public final class AsiVoice {
     }
 
     private void refresh() {
-        chip.setText(session == null ? "Dictate" : session.stopping ? "Finishing…" : "Listening · Stop");
-        chip.setContentDescription(session == null ? "Dictate with Android System Intelligence" : "Stop dictation");
-        chip.setVisibility((inCall || session != null) && canDictate() ? View.VISIBLE : View.GONE);
+        String label = editor == null ? "Dictate" : locked ? "Mic locked · Stop"
+                : session != null && session.stopping ? "Finishing…" : "Listening · Stop";
+        chip.setText(label);
+        chip.setContentDescription(editor == null ? "Dictate with Android System Intelligence"
+                : locked ? "Microphone locked. Tap to stop dictation" : "Stop dictation");
+        chip.setVisibility((inCall || editor != null) && canDictate() ? View.VISIBLE : View.GONE);
         frame.requestLayout();
     }
 
@@ -160,14 +199,23 @@ public final class AsiVoice {
     public static boolean mic(InputMethodService ime, int action, Object data) {
         if ("auto start voice".equals(data)) return false;
         if (visible == null || visible.ime != ime || !visible.canDictate()) return false;
-        if (action == -0x277c && !visible.inCall) return false;
+        if (action == -0x277c && !visible.inCall && visible.editor == null) return false;
         visible.toggle();
         return true;
     }
 
-    public static void selection(InputMethodService ime, int oldStart, int oldEnd, int start, int end) {
-        if (visible != null && visible.ime == ime && visible.session != null
-                && (oldStart != start || oldEnd != end)) visible.session.close();
+    public static boolean selection(InputMethodService ime, int oldStart, int oldEnd,
+                                    int start, int end, int composingStart, int composingEnd) {
+        AsiVoice v = visible;
+        if (v == null || v.ime != ime) return false;
+        v.seenStart = start;
+        v.seenEnd = end;
+        if (v.text == null) return false;
+        if (!v.text.acceptsSelection(oldStart, oldEnd, start, end)) {
+            v.end();
+            return false;
+        }
+        return v.text.ownsPreview(composingStart, composingEnd);
     }
 
     private void message(String text) {
@@ -176,8 +224,19 @@ public final class AsiVoice {
 
     private void toggle() {
         if (!canDictate()) return;
-        if (session != null) {
-            session.stop();
+        long now = SystemClock.uptimeMillis();
+        boolean secondTap = firstTap >= 0 && now - firstTap <= ViewConfiguration.getDoubleTapTimeout();
+        firstTap = -1;
+        if (editor != null) {
+            if (secondTap && !locked && session != null && !session.stopping) {
+                locked = true;
+                refresh();
+            } else {
+                locked = false;
+                handler.removeCallbacks(restart);
+                if (session == null) end();
+                else session.stop();
+            }
             return;
         }
         if (ime.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -189,7 +248,7 @@ public final class AsiVoice {
             return;
         }
         Intent lookup = new Intent(RecognitionService.SERVICE_INTERFACE).setPackage(ASI);
-        ComponentName provider = null;
+        provider = null;
         for (ResolveInfo item : ime.getPackageManager().queryIntentServices(lookup, 0)) {
             ServiceInfo s = item.serviceInfo;
             if (s != null && s.exported && ASI.equals(s.packageName)
@@ -202,16 +261,52 @@ public final class AsiVoice {
             message("Android System Intelligence has no available speech recognition service on this device.");
             return;
         }
-        InputConnection editor = ime.getCurrentInputConnection();
+        editor = ime.getCurrentInputConnection();
         editor.finishComposingText();
+        int start = seenStart, end = seenEnd;
+        ExtractedTextRequest snapshot = new ExtractedTextRequest();
+        snapshot.hintMaxChars = 128;
+        snapshot.hintMaxLines = 1;
+        ExtractedText current = editor.getExtractedText(snapshot, 0);
+        if (current != null && current.selectionStart >= 0 && current.selectionEnd >= 0) {
+            start = current.startOffset + current.selectionStart;
+            end = current.startOffset + current.selectionEnd;
+        }
+        text = new DictatedText(editor, start, end);
+        busyRetries = shortSilences = 0;
+        locked = secondTap;
+        if (!secondTap) firstTap = now;
+        beginSegment();
+    }
+
+    private boolean sameEditor() {
+        return visible == this && editor != null && ime.getCurrentInputConnection() == editor && canDictate();
+    }
+
+    private void beginSegment() {
+        if (!sameEditor()) { end(); return; }
         try {
-            SpeechRecognizer recognizer = SpeechRecognizer.createSpeechRecognizer(ime, provider);
-            session = new Session(editor, recognizer);
+            session = new Session(SpeechRecognizer.createSpeechRecognizer(ime, provider));
             session.begin();
         } catch (RuntimeException ex) {
-            if (session != null) session.close();
-            message("Android System Intelligence could not start (" + ex.getClass().getSimpleName() + ").");
+            fail("Android System Intelligence could not start (" + ex.getClass().getSimpleName() + ").");
         }
+    }
+
+    private void end() {
+        handler.removeCallbacks(restart);
+        if (session != null) session.release();
+        if (text != null && ime.getCurrentInputConnection() == editor) text.keep();
+        locked = false;
+        editor = null;
+        text = null;
+        refresh();
+    }
+
+    private void fail(String reason) {
+        firstTap = -1;
+        end();
+        message(reason);
     }
 
     @SuppressWarnings("deprecation")
@@ -224,13 +319,12 @@ public final class AsiVoice {
     }
 
     private final class Session implements RecognitionListener {
-        final InputConnection editor;
         final SpeechRecognizer recognizer;
-        final Runnable timeout = () -> fail("Android System Intelligence did not respond. Tap Dictate to retry.");
+        final long started = SystemClock.uptimeMillis();
+        final Runnable timeout = this::timedOut;
         boolean stopping;
 
-        Session(InputConnection editor, SpeechRecognizer recognizer) {
-            this.editor = editor;
+        Session(SpeechRecognizer recognizer) {
             this.recognizer = recognizer;
         }
 
@@ -255,26 +349,40 @@ public final class AsiVoice {
             if (stopping) return;
             stopping = true;
             refresh();
-            recognizer.stopListening();
-            arm(8000);
-        }
-
-        void close() {
-            if (session != this) return;
-            session = null;
-            handler.removeCallbacks(timeout);
             try {
-                recognizer.cancel();
-            } finally {
-                recognizer.destroy();
-                refresh();
+                recognizer.stopListening();
+                arm(2500);
+            } catch (RuntimeException ex) {
+                end();
             }
         }
 
-        void fail(String reason) {
+        void release() {
+            session = null;  // Discard callbacks already posted by the old request.
+            handler.removeCallbacks(timeout);
+            try { recognizer.cancel(); } catch (RuntimeException ignored) {}
+            try { recognizer.destroy(); } catch (RuntimeException ignored) {}
+        }
+
+        void timedOut() {
             if (session != this) return;
-            close();
-            message(reason);
+            if (locked || stopping) complete("");
+            else fail("Android System Intelligence did not respond. Tap the mic to retry.");
+        }
+
+        void complete(String words) {
+            if (session != this) return;
+            if (!sameEditor()) { end(); return; }
+            if (!text.finish(words)) {
+                fail("Dictation stopped because the text field changed or declined the edit.");
+                return;
+            }
+            release();
+            if (!locked) { end(); return; }
+            busyRetries = 0;
+            boolean rapidSilence = words.isEmpty() && SystemClock.uptimeMillis() - started < 1000;
+            shortSilences = rapidSilence ? Math.min(4, shortSilences + 1) : 0;
+            handler.postDelayed(restart, 100L << shortSilences);
         }
 
         String first(Bundle data) {
@@ -282,32 +390,33 @@ public final class AsiVoice {
             return words == null || words.isEmpty() || words.get(0) == null ? "" : words.get(0).trim();
         }
 
-        public void onReadyForSpeech(Bundle params) { if (session == this) arm(20000); }
-        public void onBeginningOfSpeech() { if (session == this) arm(120000); }
-        public void onEndOfSpeech() { if (session == this) arm(8000); }
+        public void onReadyForSpeech(Bundle params) { if (session == this && !stopping) arm(20000); }
+        public void onBeginningOfSpeech() { if (session == this && !stopping) arm(120000); }
+        public void onEndOfSpeech() { if (session == this && !stopping) arm(8000); }
         public void onPartialResults(Bundle data) {
             if (session != this || stopping) return;
-            String text = first(data);
-            if (!text.isEmpty()) chip.setText(text);
-            arm(120000);
-        }
-        public void onResults(Bundle data) {
-            if (session != this) return;
-            String text = first(data);
-            boolean valid = visible == AsiVoice.this && ime.getCurrentInputConnection() == editor && canDictate();
-            close();
-            if (!valid) return;
-            if (text.isEmpty()) {
-                message("No words heard by Android System Intelligence.");
+            if (!sameEditor()) { end(); return; }
+            if (!text.partial(first(data))) {
+                fail("Dictation stopped because the insertion point changed.");
                 return;
             }
-            CharSequence before = editor.getTextBeforeCursor(1, 0);
-            if (!TextUtils.isEmpty(before) && Character.isLetterOrDigit(before.charAt(0))
-                    && Character.isLetterOrDigit(text.codePointAt(0)) && needsWordSpace(text.codePointAt(0))
-                    && needsWordSpace(before.charAt(0))) text = " " + text;
-            if (!editor.commitText(text, 1)) message("This text field did not accept the dictation.");
+            arm(120000);
         }
+        public void onResults(Bundle data) { complete(first(data)); }
         public void onError(int error) {
+            if (session != this) return;
+            if (!sameEditor()) { end(); return; }
+            if (error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT
+                    || stopping) {
+                complete("");
+                return;
+            }
+            if (locked && error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY && busyRetries < 3) {
+                if (!text.finish("")) { end(); return; }
+                release();
+                handler.postDelayed(restart, 300L << busyRetries++);
+                return;
+            }
             String detail;
             switch (error) {
                 case SpeechRecognizer.ERROR_AUDIO: detail = "Microphone audio unavailable"; break;
@@ -325,11 +434,4 @@ public final class AsiVoice {
         public void onEvent(int event, Bundle params) {}
     }
 
-    private static boolean needsWordSpace(int codePoint) {
-        Character.UnicodeScript script = Character.UnicodeScript.of(codePoint);
-        return script != Character.UnicodeScript.HAN && script != Character.UnicodeScript.HIRAGANA
-                && script != Character.UnicodeScript.KATAKANA && script != Character.UnicodeScript.THAI
-                && script != Character.UnicodeScript.LAO && script != Character.UnicodeScript.KHMER
-                && script != Character.UnicodeScript.MYANMAR;
-    }
 }
