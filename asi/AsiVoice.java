@@ -66,6 +66,7 @@ public final class AsiVoice {
     private int shortSilences;
     private final Runnable restart = this::beginSegment;
     private static final int FLOW_SPACE_DP = 52;
+    private static final int COVER_FLOW_SPACE_DP = 76;
 
     private AsiVoice(InputMethodService ime, FrameLayout frame) {
         this.ime = ime;
@@ -114,14 +115,17 @@ public final class AsiVoice {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         if (!(params instanceof ViewGroup.MarginLayoutParams)) return;
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) params;
-        int gap = Math.round(FLOW_SPACE_DP * view.getResources().getDisplayMetrics().density);
+        int smallestWidth = view.getResources().getConfiguration().smallestScreenWidthDp;
+        int gapDp = smallestWidth > 0 && smallestWidth < 600 ? COVER_FLOW_SPACE_DP : FLOW_SPACE_DP;
+        int gap = Math.round(gapDp * view.getResources().getDisplayMetrics().density);
+        // The upstream header has zero margins. Set the absolute gap each time so
+        // an already-attached holder can shrink again when the phone unfolds.
         if (lp.isMarginRelative()) {
-            if (view.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
-                lp.setMarginStart(Math.max(lp.getMarginStart(), gap));
-            else
-                lp.setMarginEnd(Math.max(lp.getMarginEnd(), gap));
+            boolean rtl = view.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            lp.setMarginStart(rtl ? gap : 0);
+            lp.setMarginEnd(rtl ? 0 : gap);
         }
-        lp.rightMargin = Math.max(lp.rightMargin, gap);
+        lp.rightMargin = gap;
         view.setLayoutParams(lp);
     }
 

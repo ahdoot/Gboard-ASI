@@ -82,12 +82,20 @@ def hook_ime(smali):
 
 def hook_header(smali):
     # All inflated and dynamically replaced headers have this common holder.
-    if '.method protected onAttachedToWindow()V' in smali or '->onMeasure(II)V' not in smali:
+    if (' onAttachedToWindow()V' in smali or ' onConfigurationChanged(' in smali
+            or '->onMeasure(II)V' not in smali):
         raise ValueError('Unexpected keyboard holder')
     return smali + f'''
 .method protected onAttachedToWindow()V
     .locals 0
     invoke-super {{p0}}, Ltdb;->onAttachedToWindow()V
+    invoke-static {{p0}}, {BRIDGE}->reserveToolbarSpace(Landroid/view/View;)V
+    return-void
+.end method
+
+.method protected onConfigurationChanged(Landroid/content/res/Configuration;)V
+    .locals 0
+    invoke-super {{p0, p1}}, Ltdb;->onConfigurationChanged(Landroid/content/res/Configuration;)V
     invoke-static {{p0}}, {BRIDGE}->reserveToolbarSpace(Landroid/view/View;)V
     return-void
 .end method
@@ -99,7 +107,7 @@ def bump_version(data):
     old = struct.pack('<HBBI', 8, 0, 0x10, 176071770)
     if data.count(old) != 1:
         raise ValueError('Expected exactly one upstream versionCode')
-    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071771))
+    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071772))
 
 
 def rename(data, old, new):
@@ -123,7 +131,7 @@ def repackage(source, output, patched_dex, extension):
                 data = rename(data, 'com.gboardpro.app', 'com.gboardpro.asi')
                 if name == 'AndroidManifest.xml':
                     data = rename(data, 'Gboard Pro', 'Gboard ASI')
-                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.2'))
+                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.3'))
                 if name == 'classes.dex':
                     body = hashlib.sha1(data[32:]).digest() + data[32:]
                     data = data[:8] + struct.pack('<I', zlib.adler32(body)) + body

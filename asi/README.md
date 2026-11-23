@@ -8,7 +8,7 @@ This variant calls the exported Android speech recognition service in the Pixel 
 2. In app permissions, allow **Microphone** while using the app.
 3. Tap the toolbar mic once to dictate one phrase. Editors with composing-text support show ASI's interim words at the cursor as they arrive. ASI may revise those words. The blue button shows microphone status.
 4. Double-tap the toolbar mic to lock dictation. After a phrase or silence, the keyboard starts another ASI request in the same field. Tap the mic or **Mic locked · Stop** to finish. Moving the cursor or leaving the field ends dictation.
-5. Try the same gestures during a call using **Dictate**. The keyboard reserves 52 dp at the right of the toolbar for your floating button. Position the floating button using its own drag control.
+5. Try the same gestures during a call using **Dictate**. The right side of the toolbar leaves 76 dp for the floating button on compact screens (smallest width below 600 dp) and 52 dp on larger screens. Position the floating button using its own drag control.
 
 ## Build the signed APK
 
@@ -21,7 +21,7 @@ curl -fL https://github.com/smartworldarafath/Gboard_Pro/releases/download/v2.1.
 python3 asi/build.py --base Gboard_Pro.apk \
   --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
   --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
-  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.2.apk
+  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.3.apk
 ```
 
 The fork has its own application ID, `com.gboardpro.asi`. Its manifest explicitly queries the Pixel system package. Signing and 16 KiB APK alignment are verified at the end of the build. Live call behavior needs verification on a physical Pixel.
