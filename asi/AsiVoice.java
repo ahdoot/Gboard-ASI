@@ -55,6 +55,7 @@ public final class AsiVoice {
     private final Rect bounds = new Rect();
     private Runnable unregister;
     private Session session;
+    private SpeechRecognizer recognizer;
     private boolean inCall;
     private boolean locked;
     private long firstTap = -1;
@@ -220,7 +221,11 @@ public final class AsiVoice {
         if (v == null || v.ime != ime) return false;
         v.seenStart = start;
         v.seenEnd = end;
-        if (v.text == null) return false;
+        if (v.text == null) {
+            if (v.editor != null && oldStart >= 0 && oldEnd >= 0 && (start != oldStart || end != oldEnd))
+                v.end();
+            return false;
+        }
         if (!v.text.acceptsSelection(oldStart, oldEnd, start, end)) {
             v.end();
             return false;
@@ -273,6 +278,15 @@ public final class AsiVoice {
         }
         editor = ime.getCurrentInputConnection();
         editor.finishComposingText();
+        busyRetries = shortSilences = 0;
+        locked = secondTap;
+        if (!secondTap) firstTap = now;
+        beginSegment();
+    }
+
+    // Defer cross-process editor reads until ASI has words to insert.
+    private DictatedText currentText() {
+        if (text != null) return text;
         int start = seenStart, end = seenEnd;
         ExtractedTextRequest snapshot = new ExtractedTextRequest();
         snapshot.hintMaxChars = 128;
@@ -283,10 +297,13 @@ public final class AsiVoice {
             end = current.startOffset + current.selectionEnd;
         }
         text = new DictatedText(editor, start, end);
-        busyRetries = shortSilences = 0;
-        locked = secondTap;
-        if (!secondTap) firstTap = now;
-        beginSegment();
+        if (current != null && current.text != null && current.partialStartOffset < 0) {
+            int insertion = Math.min(current.selectionStart, current.selectionEnd);
+            if (insertion > 0 && insertion <= current.text.length())
+                text.setPreceding(Character.codePointBefore(current.text, insertion));
+            else if (insertion == 0 && current.startOffset == 0) text.setPreceding(-1);
+        }
+        return text;
     }
 
     private boolean sameEditor() {
@@ -296,16 +313,25 @@ public final class AsiVoice {
     private void beginSegment() {
         if (!sameEditor()) { end(); return; }
         try {
-            session = new Session(SpeechRecognizer.createSpeechRecognizer(ime, provider));
+            if (recognizer == null) recognizer = SpeechRecognizer.createSpeechRecognizer(ime, provider);
+            session = new Session();
             session.begin();
         } catch (RuntimeException ex) {
             fail("Android System Intelligence could not start (" + ex.getClass().getSimpleName() + ").");
         }
     }
 
+    private void closeRecognizer() {
+        if (recognizer == null) return;
+        try { recognizer.cancel(); } catch (RuntimeException ignored) {}
+        try { recognizer.destroy(); } catch (RuntimeException ignored) {}
+        recognizer = null;
+    }
+
     private void end() {
         handler.removeCallbacks(restart);
-        if (session != null) session.release();
+        if (session != null) session.retire();
+        closeRecognizer();
         if (text != null && ime.getCurrentInputConnection() == editor) text.keep();
         locked = false;
         editor = null;
@@ -329,16 +355,11 @@ public final class AsiVoice {
     }
 
     private final class Session implements RecognitionListener {
-        final SpeechRecognizer recognizer;
         final long started = SystemClock.uptimeMillis();
         final Runnable timeout = this::timedOut;
         boolean stopping;
         boolean ready;
         boolean speechEnded;
-
-        Session(SpeechRecognizer recognizer) {
-            this.recognizer = recognizer;
-        }
 
         void begin() {
             refresh();
@@ -369,32 +390,31 @@ public final class AsiVoice {
             }
         }
 
-        void release() {
+        void retire() {
             session = null;  // Discard callbacks already posted by the old request.
             handler.removeCallbacks(timeout);
-            try { recognizer.cancel(); } catch (RuntimeException ignored) {}
-            try { recognizer.destroy(); } catch (RuntimeException ignored) {}
         }
 
         void timedOut() {
             if (session != this) return;
-            if (locked || stopping) complete("");
+            if (locked || stopping) complete("", false);
             else fail("Android System Intelligence did not respond. Tap the mic to retry.");
         }
 
-        void complete(String words) {
+        void complete(String words, boolean requestEnded) {
             if (session != this) return;
             if (!sameEditor()) { end(); return; }
-            if (!text.finish(words)) {
+            if ((text != null || !words.isEmpty()) && !currentText().finish(words)) {
                 fail("Dictation stopped because the text field changed or declined the edit.");
                 return;
             }
-            release();
+            retire();
+            if (!requestEnded) closeRecognizer();
             if (!locked) { end(); return; }
             busyRetries = 0;
             boolean rapidSilence = words.isEmpty() && SystemClock.uptimeMillis() - started < 1000;
             shortSilences = rapidSilence ? Math.min(4, shortSilences + 1) : 0;
-            handler.postDelayed(restart, 100L << shortSilences);
+            handler.postDelayed(restart, rapidSilence ? 100L << shortSilences : 0);
         }
 
         String first(Bundle data) {
@@ -421,24 +441,26 @@ public final class AsiVoice {
         public void onPartialResults(Bundle data) {
             if (session != this || stopping) return;
             if (!sameEditor()) { end(); return; }
-            if (!text.partial(first(data))) {
+            String words = first(data);
+            if (!words.isEmpty() && !currentText().partial(words)) {
                 fail("Dictation stopped because the insertion point changed.");
                 return;
             }
             listening(120000);
         }
-        public void onResults(Bundle data) { complete(first(data)); }
+        public void onResults(Bundle data) { complete(first(data), true); }
         public void onError(int error) {
             if (session != this) return;
             if (!sameEditor()) { end(); return; }
             if (error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT
                     || stopping) {
-                complete("");
+                complete("", true);
                 return;
             }
             if (locked && error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY && busyRetries < 3) {
-                if (!text.finish("")) { end(); return; }
-                release();
+                if (text != null && !text.finish("")) { end(); return; }
+                retire();
+                closeRecognizer();
                 handler.postDelayed(restart, 300L << busyRetries++);
                 return;
             }

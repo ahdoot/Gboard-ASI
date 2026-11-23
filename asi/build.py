@@ -137,7 +137,7 @@ def bump_version(data):
     old = struct.pack('<HBBI', 8, 0, 0x10, 176071770)
     if data.count(old) != 1:
         raise ValueError('Expected exactly one upstream versionCode')
-    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071773))
+    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071774))
 
 
 def rename(data, old, new):
@@ -161,7 +161,7 @@ def repackage(source, output, patched_dex, extension):
                 data = rename(data, 'com.gboardpro.app', 'com.gboardpro.asi')
                 if name == 'AndroidManifest.xml':
                     data = rename(data, 'Gboard Pro', 'Gboard ASI')
-                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.4'))
+                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.5'))
                 if name == 'classes.dex':
                     body = hashlib.sha1(data[32:]).digest() + data[32:]
                     data = data[:8] + struct.pack('<I', zlib.adler32(body)) + body

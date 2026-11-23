@@ -9,6 +9,7 @@ import java.lang.reflect.Proxy;
 public final class DictatedTextTest {
     private static final class Field implements InvocationHandler {
         String value;
+        int contextReads;
         int start, end;
         int markedStart = -1, markedEnd;
         boolean supportsComposition = true;
@@ -27,6 +28,7 @@ public final class DictatedTextTest {
             int insertion = Math.min(start, end);
             switch (name) {
                 case "getTextBeforeCursor":
+                    contextReads++;
                     return value.substring(Math.max(0, insertion - (Integer) args[0]), insertion);
                 case "setComposingRegion":
                     if (!supportsComposition) return false;
@@ -62,7 +64,11 @@ public final class DictatedTextTest {
     public static void main(String[] args) {
         Field f = new Field("Pickup at  today", 10, 10);
         DictatedText text = f.begin();
+        require(text.finish(""));
+        require(f.contextReads == 0);
+        text.setPreceding(' ');
         require(text.partial("for"));
+        require(f.contextReads == 0);
         eq(f.value, "Pickup at for today");
         require(text.partial("four"));
         eq(f.value, "Pickup at four today");

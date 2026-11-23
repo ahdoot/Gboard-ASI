@@ -10,6 +10,7 @@ final class DictatedText {
     private int anchor;
     private int caret;
     private String preview = "";
+    private static final int UNKNOWN = -2;
     private int preceding;
     private boolean live;
 
@@ -23,13 +24,18 @@ final class DictatedText {
     private void nextPhrase() {
         preview = "";
         live = anchor >= 0;
-        preceding = -1;
-        CharSequence before = editor.getTextBeforeCursor(2, 0);
-        if (before != null && before.length() > 0)
-            preceding = Character.codePointBefore(before, before.length());
+        preceding = UNKNOWN;
+    }
+
+    void setPreceding(int codePoint) {
+        preceding = codePoint;
     }
 
     private String format(String words) {
+        if (preceding == UNKNOWN) {
+            CharSequence before = editor.getTextBeforeCursor(2, 0);
+            preceding = before == null || before.length() == 0 ? -1 : Character.codePointBefore(before, before.length());
+        }
         int first = words.codePointAt(0);
         if (preceding >= 0 && Character.isLetterOrDigit(first)
                 && (Character.isLetterOrDigit(preceding) || ".,!?;:".indexOf(preceding) >= 0)
