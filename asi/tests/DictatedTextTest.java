@@ -10,6 +10,8 @@ public final class DictatedTextTest {
     private static final class Field implements InvocationHandler {
         String value;
         int contextReads;
+        int batches;
+        boolean inBatch;
         int start, end;
         int markedStart = -1, markedEnd;
         boolean supportsComposition = true;
@@ -27,10 +29,20 @@ public final class DictatedTextTest {
             String name = method.getName();
             int insertion = Math.min(start, end);
             switch (name) {
+                case "beginBatchEdit":
+                    require(!inBatch);
+                    inBatch = true;
+                    batches++;
+                    return true;
+                case "endBatchEdit":
+                    require(inBatch);
+                    inBatch = false;
+                    return true;
                 case "getTextBeforeCursor":
                     contextReads++;
                     return value.substring(Math.max(0, insertion - (Integer) args[0]), insertion);
                 case "setComposingRegion":
+                    require(inBatch);
                     if (!supportsComposition) return false;
                     markedStart = (Integer) args[0];
                     markedEnd = (Integer) args[1];
@@ -69,8 +81,10 @@ public final class DictatedTextTest {
         text.setPreceding(' ');
         require(text.partial("for"));
         require(f.contextReads == 0);
+        require(f.batches == 0);
         eq(f.value, "Pickup at for today");
         require(text.partial("four"));
+        require(f.batches == 1 && !f.inBatch);
         eq(f.value, "Pickup at four today");
         // Coalesced self-generated cursor updates must leave the mic running.
         require(text.acceptsSelection(10, 10, 14, 14));
@@ -112,6 +126,7 @@ public final class DictatedTextTest {
         require(!text.acceptsSelection(6, 6, 0, 0));
         f.start = f.end = 0;
         require(!text.partial("testing"));
+        require(!f.inBatch);
         eq(f.value, "A test");
 
         f = new Field("東京", 2, 2);

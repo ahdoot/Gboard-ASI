@@ -71,19 +71,33 @@ final class DictatedText {
         return !preview.isEmpty() && start == anchor && end > start;
     }
 
+    private boolean write(String value, boolean composing) {
+        // Keep re-marking and replacing the visible phrase in one editor update.
+        boolean batch = !preview.isEmpty();
+        if (batch) editor.beginBatchEdit();
+        try {
+            if (!markPreview()) return false;
+            if (composing) {
+                if (!editor.setComposingText(value, 1)) {
+                    live = false;  // The editor can still accept the final text.
+                    return true;
+                }
+                preview = value;
+            } else {
+                if (!editor.commitText(value, 1)) return false;
+                preview = "";
+            }
+            if (anchor >= 0) expect(anchor + value.length());
+            return true;
+        } finally {
+            if (batch) editor.endBatchEdit();
+        }
+    }
+
     boolean partial(String words) {
         if (words.isEmpty() || !live) return true;
         String text = format(words);
-        if (text.equals(preview)) return true;
-        if (!markPreview()) return false;
-        if (editor.setComposingText(text, 1)) {
-            preview = text;
-            expect(anchor + text.length());
-        } else {
-            // An editor can decline inline composition but still accept a final commit.
-            live = false;
-        }
-        return true;
+        return text.equals(preview) || write(text, true);
     }
 
     boolean finish(String words) {
@@ -94,11 +108,7 @@ final class DictatedText {
             String text = format(words);
             if (text.equals(preview)) {
                 keep();
-            } else {
-                if (!markPreview() || !editor.commitText(text, 1)) return false;
-                if (anchor >= 0) expect(anchor + text.length());
-                preview = "";
-            }
+            } else if (!write(text, false)) return false;
         }
         // With a selected range and no words, keep the original insertion anchor.
         if (!words.isEmpty() || hadPreview) anchor = anchor < 0 ? -1 : caret;

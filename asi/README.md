@@ -6,7 +6,7 @@ This variant calls the exported Android speech recognition service in the Pixel 
 
 1. Install the signed Gboard ASI APK over your existing Gboard ASI. For a fresh installation, enable and select **Gboard ASI** in Android's on-screen keyboard settings.
 2. In app permissions, allow **Microphone** while using the app.
-3. Tap the toolbar mic once to dictate one phrase. Editors with composing-text support show ASI's interim words at the cursor as they arrive. ASI may revise those words. The toolbar mic turns blue, red, yellow and green while ASI listens, and returns to its themed icon when listening ends.
+3. Tap the toolbar mic once to dictate one phrase. Editors with composing-text support show ASI's interim words at the cursor as they arrive. ASI may revise those words. With automatic punctuation enabled on Android 13 and later, the keyboard requests low-latency capitalization and punctuation in prose fields. ASI decides which formatting requests it supports. The toolbar mic turns blue, red, yellow and green while ASI listens, and returns to its themed icon when listening ends.
 4. Double-tap the toolbar mic to lock dictation. The mic stays colorful through pauses. After a spoken phrase, the keyboard immediately requests the next phrase on the same ASI connection. Repeated empty responses still back off. Tap the mic or **Mic locked · Stop** to finish. Moving the cursor or leaving the field ends dictation.
 5. Try the same gestures during a call using **Dictate**. The right side of the toolbar leaves 76 dp for the floating button on compact screens (smallest width below 600 dp) and 52 dp on larger screens. Position the floating button using its own drag control.
 
@@ -21,7 +21,7 @@ curl -fL https://github.com/smartworldarafath/Gboard_Pro/releases/download/v2.1.
 python3 asi/build.py --base Gboard_Pro.apk \
   --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" \
   --build-tools "$ANDROID_HOME/build-tools/35.0.0" \
-  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.5.apk
+  --apktool "$APKTOOL_JAR" --keystore asi.p12 --out Gboard-ASI-0.6.apk
 ```
 
 The fork has its own application ID, `com.gboardpro.asi`. Its manifest explicitly queries the Pixel system package. Signing and 16 KiB APK alignment are verified at the end of the build. Live call behavior needs verification on a physical Pixel.

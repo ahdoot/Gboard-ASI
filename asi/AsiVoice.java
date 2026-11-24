@@ -44,6 +44,11 @@ import java.util.Locale;
 
 /** Owned by the visible IME window. All entry points are on its main thread. */
 public final class AsiVoice {
+    /** Implemented by the pinned IME using the same preference reader as its voice settings. */
+    public interface VoicePreferences {
+        boolean asiAutoPunctuationEnabled();
+    }
+
     private static final String ASI = "com.google.android.as";
     private static AsiVoice visible;
     private final InputMethodService ime;
@@ -165,6 +170,22 @@ public final class AsiVoice {
         return cls != InputType.TYPE_CLASS_TEXT || (variation != InputType.TYPE_TEXT_VARIATION_PASSWORD
                 && variation != InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 && variation != InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD);
+    }
+
+    private boolean wantsFormattedSpeech() {
+        EditorInfo info = ime.getCurrentInputEditorInfo();
+        if (info == null || (info.inputType & InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT)
+            return false;
+        switch (info.inputType & InputType.TYPE_MASK_VARIATION) {
+            case InputType.TYPE_TEXT_VARIATION_NORMAL:
+            case InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE:
+            case InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE:
+            case InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT:
+            case InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT:
+                return ((VoicePreferences) ime).asiAutoPunctuationEnabled();
+            default:
+                return false;
+        }
     }
 
     private void refresh() {
@@ -367,6 +388,10 @@ public final class AsiVoice {
             request.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             request.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language());
             request.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+            if (Build.VERSION.SDK_INT >= 33 && wantsFormattedSpeech()) {
+                request.putExtra(RecognizerIntent.EXTRA_ENABLE_FORMATTING, RecognizerIntent.FORMATTING_OPTIMIZE_LATENCY);
+                request.putExtra(RecognizerIntent.EXTRA_HIDE_PARTIAL_TRAILING_PUNCTUATION, true);
+            }
             request.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, ime.getPackageName());
             recognizer.setRecognitionListener(this);
             recognizer.startListening(request);
@@ -419,7 +444,12 @@ public final class AsiVoice {
 
         String first(Bundle data) {
             List<String> words = data == null ? null : data.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            return words == null || words.isEmpty() || words.get(0) == null ? "" : words.get(0).trim();
+            if (words != null) {
+                for (String candidate : words) {
+                    if (candidate != null && !candidate.trim().isEmpty()) return candidate.trim();
+                }
+            }
+            return "";
         }
 
         private void listening(long timeoutMs) {

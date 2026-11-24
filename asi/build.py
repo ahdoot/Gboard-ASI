@@ -34,6 +34,20 @@ def prologue(method, instructions):
 
 
 def hook_ime(smali):
+    # Read Gboard's automatic punctuation switch exactly as its own voice path does in v2.1.1.
+    smali = smali.replace('# interfaces\n', '# interfaces\n.implements Llocal/gboard/asi/AsiVoice$VoicePreferences;\n', 1)
+    smali += '''
+.method public final asiAutoPunctuationEnabled()Z
+    .locals 3
+    invoke-static {p0}, Lqou;->I(Landroid/content/Context;)Lqou;
+    move-result-object v0
+    const v1, 0x7f140942
+    const/4 v2, 0x1
+    invoke-virtual {v0, v1, v2}, Lcdx;->x(IZ)Z
+    move-result v0
+    return v0
+.end method
+'''
     # The disabled mic, direct dictation, regular mic and Jetson mic converge in aw().
     # Reuse scratch registers before the original method initializes them.
     mic_dispatch = f"""
@@ -137,7 +151,7 @@ def bump_version(data):
     old = struct.pack('<HBBI', 8, 0, 0x10, 176071770)
     if data.count(old) != 1:
         raise ValueError('Expected exactly one upstream versionCode')
-    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071774))
+    return data.replace(old, struct.pack('<HBBI', 8, 0, 0x10, 176071775))
 
 
 def rename(data, old, new):
@@ -161,7 +175,7 @@ def repackage(source, output, patched_dex, extension):
                 data = rename(data, 'com.gboardpro.app', 'com.gboardpro.asi')
                 if name == 'AndroidManifest.xml':
                     data = rename(data, 'Gboard Pro', 'Gboard ASI')
-                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.5'))
+                    data = bump_version(rename(data, '18.6.3-v2.1.1', '18.6.3-asi0.6'))
                 if name == 'classes.dex':
                     body = hashlib.sha1(data[32:]).digest() + data[32:]
                     data = data[:8] + struct.pack('<I', zlib.adler32(body)) + body
