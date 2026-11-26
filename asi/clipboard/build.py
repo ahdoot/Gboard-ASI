@@ -4,14 +4,15 @@ import hashlib
 import os
 from pathlib import Path
 import re
-import shutil
 import struct
-import subprocess
+import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from update_apk import compile_bridge, package_update, run
+
 BASE_SHA = "0440cd907bbe92760b02cf90ab0e5ddbe9f9ee5cf924a27dd66967277a89eaa8"
-CERT = "c5ab9ecbb3a5e97a36cfc3c2d0e0716b6cd7e66849733fa44e2b66dfb4db2306"
 BRIDGE = "Llocal/gboard/asi/clipboard/GmailImagePaste;"
 HERE = Path(__file__).resolve().parent
 
@@ -60,10 +61,6 @@ def patch_manifest(data):
     raise ValueError("Missing version name")
 
 
-def run(*args):
-    subprocess.run(list(map(str, args)), check=True)
-
-
 def build(a):
     with a.base.open("rb") as f:
         if hashlib.file_digest(f, "sha256").hexdigest() != BASE_SHA:
@@ -91,40 +88,9 @@ def build(a):
         patched = work / "patched.zip"
         run(*apktool, "b", "-j", "2", "-o", patched, decoded)
 
-        classes = work / "classes"
-        classes.mkdir()
-        compiler = ["java", "-jar", a.ecj] if a.ecj else ["javac"]
-        run(*compiler, "-source", "8", "-target", "8", "-proc:none", "-classpath", a.android_jar,
-            "-d", classes, HERE / "GmailImagePaste.java")
-        jar = work / "bridge.jar"
-        with zipfile.ZipFile(jar, "w") as z:
-            for item in classes.rglob("*.class"):
-                z.write(item, item.relative_to(classes))
-        run(a.tools / "d8", "--min-api", "29", "--lib", a.android_jar, "--output", work, jar)
-        unsigned = work / "unsigned.apk"
-        with zipfile.ZipFile(unsigned, "w") as out, zipfile.ZipFile(patched) as dex:
-            for entry in base.infolist():
-                name = entry.filename
-                if re.fullmatch(r"META-INF/(?:MANIFEST\.MF|[^/]+\.(?:RSA|DSA|EC|SF))", name, re.I):
-                    continue
-                if name == "AndroidManifest.xml":
-                    out.writestr(entry, patch_manifest(base.read(entry)))
-                elif name in ("classes2.dex", "classes3.dex"):
-                    out.writestr(entry, dex.read("classes.dex" if name == "classes2.dex" else "classes2.dex"))
-                else:
-                    with base.open(entry) as src, out.open(entry, "w") as dst:
-                        shutil.copyfileobj(src, dst, 1024 * 1024)
-            out.write(work / "classes.dex", "classes7.dex", zipfile.ZIP_DEFLATED)
-        aligned, signed = work / "aligned.apk", work / "signed.apk"
-        run(a.tools / "zipalign", "-P", "16", "-f", "4", unsigned, aligned)
-        run(a.tools / "apksigner", "sign", "--ks", a.keystore, "--ks-key-alias", "asi",
-            "--ks-pass", "env:ASI_KS_PASS", "--v4-signing-enabled", "false", "--out", signed, aligned)
-        result = subprocess.check_output([a.tools / "apksigner", "verify", "--print-certs", signed], text=True)
-        if "certificate SHA-256 digest: " + CERT not in result:
-            raise ValueError("Signing identity did not match 0.12")
-        run(a.tools / "zipalign", "-c", "-P", "16", "4", signed)
-        a.out.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(signed, a.out)
+        compile_bridge(a, work, HERE / "GmailImagePaste.java")
+        package_update(a, work, base, patched, patch_manifest(base.read("AndroidManifest.xml")),
+                       {"classes2.dex": "classes.dex", "classes3.dex": "classes2.dex"}, "classes7.dex")
 
 
 if __name__ == "__main__":
