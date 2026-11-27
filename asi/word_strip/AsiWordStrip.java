@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ public final class AsiWordStrip {
     private static final int WORD_LABEL = 0x7f0b05f3;
     private static final int WORD_HOLDER = 0x7f0b14e5;
     private static final int SPLIT_GROUP = 0x7f0b067b;
-    private static final int COMPACT_ROW_TAG = 0x7e010001;
     private static final String HOLDER_CLASS =
             "com.google.android.apps.inputmethod.latin.keyboard.widget.LatinFixedCountCandidatesHolderView";
 
@@ -90,10 +88,9 @@ public final class AsiWordStrip {
     }
 
     static float firstWordOffset(float original, float inkLeft, float inkRight,
-                                 float width, boolean rtl) {
+                                 float width, float density, boolean rtl) {
         float space = rtl ? width - (inkRight + original) : inkLeft + original;
-        // Anchor to the leading edge, down to one physical pixel for glyph antialiasing.
-        float shift = Math.max(0f, space - 1f);
+        float shift = Math.min(8f * density, Math.max(0f, space - density));
         return rtl ? original + shift : original - shift;
     }
 
@@ -106,67 +103,6 @@ public final class AsiWordStrip {
         return false;
     }
 
-    // Preserve the row's total width and each word's usable tap target. Give
-    // released width to words that would otherwise shrink, then to the last cell.
-    static void fitWords(int[] widths, int[] wanted, int count, int minTarget) {
-        int spare = 0;
-        for (int i = 0; i < count; i++) {
-            int compact = Math.min(widths[i], Math.max(minTarget, wanted[i]));
-            spare += widths[i] - compact;
-            widths[i] = compact;
-        }
-        for (int i = 0; i < count && spare > 0; i++) {
-            int give = Math.min(spare, Math.max(0, wanted[i] - widths[i]));
-            widths[i] += give;
-            spare -= give;
-        }
-        widths[count - 1] += spare;
-    }
-
-    public static void compactWords(LinearLayout row) {
-        row.setTag(COMPACT_ROW_TAG, null);
-        int count = row.getChildCount();
-        if (count < 2) return;
-        View[] keys = new View[count];
-        int[] nativeWidths = new int[count];
-        int[] wanted = new int[count];
-        int used = 0;
-        for (int i = 0; i < count; i++) {
-            View key = row.getChildAt(i);
-            if (key.getVisibility() != View.VISIBLE) continue;
-            if (key.getId() == SPLIT_GROUP) {
-                ViewGroup group = (ViewGroup) key;
-                int visible = 0;
-                for (int j = 0; j < group.getChildCount(); j++) {
-                    if (group.getChildAt(j).getVisibility() == View.VISIBLE) visible++;
-                }
-                if (visible != 1) return;
-            }
-            View candidate = key.findViewById(WORD_LABEL);
-            if (!(candidate instanceof TextView) || candidate.getVisibility() != View.VISIBLE) return;
-            TextView label = (TextView) candidate;
-            CharSequence text = label.getText();
-            int width = key.getMeasuredWidth();
-            if (text == null || text.length() == 0 || width <= 0 || label.getMeasuredWidth() <= 0) return;
-            int structure = Math.max(0, width - label.getMeasuredWidth());
-            int ink = (int) Math.ceil(android.text.Layout.getDesiredWidth(text, label.getPaint()));
-            keys[used] = key;
-            nativeWidths[used] = width;
-            wanted[used] = ink + structure + label.getCompoundPaddingLeft() + label.getCompoundPaddingRight();
-            used++;
-        }
-        if (used < 2) return;
-        row.setTag(COMPACT_ROW_TAG, Boolean.TRUE);
-        fitWords(nativeWidths, wanted, used, Math.round(48 * row.getResources().getDisplayMetrics().density));
-        for (int i = 0; i < used; i++) {
-            View key = keys[i];
-            if (nativeWidths[i] != key.getMeasuredWidth()) {
-                key.measure(View.MeasureSpec.makeMeasureSpec(nativeWidths[i], View.MeasureSpec.EXACTLY),
-                        View.MeasureSpec.makeMeasureSpec(key.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
-            }
-        }
-    }
-
     public static float align(View label, RectF available, RectF ink, float original) {
         if (label.getId() != WORD_LABEL) return original;
         View child = label;
@@ -175,12 +111,10 @@ public final class AsiWordStrip {
             if (parent.getId() == SPLIT_GROUP && !firstVisibleChild(parent, child)) return original;
             if (parent instanceof LinearLayout && (parent.getId() == WORD_HOLDER
                     || HOLDER_CLASS.equals(parent.getClass().getName()))) {
-                boolean first = firstVisibleChild(parent, child);
-                if (!first && parent.getTag(COMPACT_ROW_TAG) != Boolean.TRUE) return original;
-                // The following labels keep a small inset next to their divider.
-                float inset = first ? 0 : Math.max(0f, 3 * label.getResources().getDisplayMetrics().density - 1f);
-                return firstWordOffset(original, ink.left - inset, ink.right + inset,
+                if (!firstVisibleChild(parent, child)) return original;
+                return firstWordOffset(original, ink.left, ink.right,
                         available.right + label.getPaddingRight(),
+                        label.getResources().getDisplayMetrics().density,
                         parent.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
             }
             child = parent;
