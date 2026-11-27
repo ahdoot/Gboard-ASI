@@ -9,6 +9,9 @@ package com.akshaykadam.pixelboard.extension.clipboard;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.icu.text.MeasureFormat;
+import android.icu.util.Measure;
+import android.icu.util.MeasureUnit;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -22,10 +25,11 @@ import com.akshaykadam.pixelboard.extension.settings.GboardSettingsText;
 /**
  * Settings feature that exposes the Clipboard History Duration slider.
  *
- * <p>Presents five discrete retention steps:
+ * <p>Presents six discrete retention steps:
  * <ol>
  *   <li>1 hour</li>
  *   <li>24 hours (Gboard default / previous maximum)</li>
+ *   <li>3 days</li>
  *   <li>7 days</li>
  *   <li>30 days</li>
  *   <li>Never (unlimited — manual deletion only)</li>
@@ -76,6 +80,8 @@ public final class GboardClipboardHistorySettingsFeature
                         R.string.gboard_patches_clipboard_history_duration_1h),
                 GboardSettingsText.get(context,
                         R.string.gboard_patches_clipboard_history_duration_24h),
+                MeasureFormat.getInstance(context.getResources().getConfiguration().getLocales().get(0),
+                        MeasureFormat.FormatWidth.WIDE).format(new Measure(3, MeasureUnit.DAY)),
                 GboardSettingsText.get(context,
                         R.string.gboard_patches_clipboard_history_duration_7d),
                 GboardSettingsText.get(context,

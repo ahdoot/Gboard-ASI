@@ -22,6 +22,7 @@ import com.akshaykadam.pixelboard.extension.settings.GboardPatchesSettings;
  * <ul>
  *   <li>{@link #DURATION_1_HOUR} ("1") – 1 hour</li>
  *   <li>{@link #DURATION_24_HOURS} ("24") – 24 hours</li>
+ *   <li>{@link #DURATION_3_DAYS} ("72") – 3 days</li>
  *   <li>{@link #DURATION_7_DAYS} ("168") – 7 days</li>
  *   <li>{@link #DURATION_30_DAYS} ("720") – 30 days</li>
  *   <li>{@link #DURATION_NEVER} ("876000") – Never (Unlimited / Manual deletion only, 100 years)</li>
@@ -36,6 +37,7 @@ public final class GboardClipboardHistorySettings {
     // Duration values in hours (matching Gboard's native slider entryValues)
     public static final String DURATION_1_HOUR    = "1";
     public static final String DURATION_24_HOURS  = "24";
+    public static final String DURATION_3_DAYS    = "72";
     public static final String DURATION_7_DAYS    = "168";
     public static final String DURATION_30_DAYS   = "720";
     public static final String DURATION_NEVER     = "876000";
@@ -50,6 +52,7 @@ public final class GboardClipboardHistorySettings {
      */
     public static final long DURATION_MS_1_HOUR   = 60L * 60L * 1_000L;
     public static final long DURATION_MS_24_HOURS = 24L * DURATION_MS_1_HOUR;
+    public static final long DURATION_MS_3_DAYS   = 3L * DURATION_MS_24_HOURS;
     public static final long DURATION_MS_7_DAYS   = 7L  * 24L * DURATION_MS_1_HOUR;
     public static final long DURATION_MS_30_DAYS  = 30L * 24L * DURATION_MS_1_HOUR;
     public static final long DURATION_MS_NEVER    = 876_000L * DURATION_MS_1_HOUR;
@@ -58,6 +61,7 @@ public final class GboardClipboardHistorySettings {
     public static final String[] ALL_DURATIONS = {
             DURATION_1_HOUR,
             DURATION_24_HOURS,
+            DURATION_3_DAYS,
             DURATION_7_DAYS,
             DURATION_30_DAYS,
             DURATION_NEVER
@@ -185,6 +189,7 @@ public final class GboardClipboardHistorySettings {
         }
         switch (sanitize(duration)) {
             case DURATION_1_HOUR:   return DURATION_MS_1_HOUR;
+            case DURATION_3_DAYS:   return DURATION_MS_3_DAYS;
             case DURATION_7_DAYS:   return DURATION_MS_7_DAYS;
             case DURATION_30_DAYS:  return DURATION_MS_30_DAYS;
             case DURATION_NEVER:    return DURATION_MS_NEVER;
@@ -198,6 +203,7 @@ public final class GboardClipboardHistorySettings {
         if (duration != null) {
             if ("1h".equals(duration)) return DURATION_1_HOUR;
             if ("24h".equals(duration)) return DURATION_24_HOURS;
+            if ("3d".equals(duration)) return DURATION_3_DAYS;
             if ("7d".equals(duration)) return DURATION_7_DAYS;
             if ("30d".equals(duration)) return DURATION_30_DAYS;
             if ("never".equals(duration)) return DURATION_NEVER;

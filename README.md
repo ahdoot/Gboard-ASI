@@ -263,9 +263,10 @@ Stock Gboard discards your copied items after 1 hour and only displays 5 unpinne
 
 - **24-Hour Default Retention**: Unpinned copied text, links, and images are kept for a full 24 hours by default.
 - **100 Recent Clips Capacity**: The unpinned clipboard buffer is raised from 5 to 100 clips, allowing you to access older copied items without them disappearing.
-- **Discrete 5-Step Retention Slider**: Customize your clipboard retention in Settings:
+- **Discrete 6-Step Retention Slider**: Customize your clipboard retention in Settings:
   - `1 hour` (Stock Gboard behavior)
   - `24 hours` (Default Gboard Pro setting)
+  - `3 days`
   - `7 days`
   - `30 days`
   - `Never` (Unlimited clipboard retention)

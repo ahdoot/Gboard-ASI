@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
  * <ol>
  *   <li>1 hour ("1")</li>
  *   <li>24 hours ("24")</li>
+ *   <li>3 days ("72")</li>
  *   <li>7 days ("168")</li>
  *   <li>30 days ("720")</li>
  *   <li>Never (Unlimited / Manual deletion only) ("876000", 100 years)</li>
@@ -33,6 +34,7 @@ public final class GboardClipboardHistoryRuntime {
     public static final CharSequence[] RETENTION_LABELS = new CharSequence[] {
             "1 hour",
             "24 hours",
+            "3 days",
             "7 days",
             "30 days",
             "Never (Unlimited / Manual deletion only)"
@@ -41,6 +43,7 @@ public final class GboardClipboardHistoryRuntime {
     public static final CharSequence[] RETENTION_VALUES = new CharSequence[] {
             GboardClipboardHistorySettings.DURATION_1_HOUR,
             GboardClipboardHistorySettings.DURATION_24_HOURS,
+            GboardClipboardHistorySettings.DURATION_3_DAYS,
             GboardClipboardHistorySettings.DURATION_7_DAYS,
             GboardClipboardHistorySettings.DURATION_30_DAYS,
             GboardClipboardHistorySettings.DURATION_NEVER
@@ -91,7 +94,7 @@ public final class GboardClipboardHistoryRuntime {
                 pField.setInt(preference, DEFAULT_INDEX);
             }
 
-            int maxIndex = RETENTION_VALUES.length - 1; // 4
+            int maxIndex = RETENTION_VALUES.length - 1;
 
             // Determine target index from currently persisted string or fall back to the default (24 hours)
             int targetIndex = DEFAULT_INDEX;
