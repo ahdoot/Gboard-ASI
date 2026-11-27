@@ -24,7 +24,7 @@ def compile_bridge(a, work, source):
     run(a.tools / "d8", "--min-api", "29", "--lib", a.android_jar, "--output", work, jar)
 
 
-def package_update(a, work, base, patched, manifest, dex_mapping, bridge_name):
+def package_update(a, work, base, patched, manifest, dex_mapping, bridge_name=None):
     unsigned = work / "unsigned.apk"
     with zipfile.ZipFile(unsigned, "w") as out, zipfile.ZipFile(patched) as dex:
         for entry in base.infolist():
@@ -38,7 +38,8 @@ def package_update(a, work, base, patched, manifest, dex_mapping, bridge_name):
             else:
                 with base.open(entry) as src, out.open(entry, "w") as dst:
                     shutil.copyfileobj(src, dst, 1024 * 1024)
-        out.write(work / "classes.dex", bridge_name, zipfile.ZIP_DEFLATED)
+        if bridge_name is not None:
+            out.write(work / "classes.dex", bridge_name, zipfile.ZIP_DEFLATED)
     aligned, signed = work / "aligned.apk", work / "signed.apk"
     run(a.tools / "zipalign", "-P", "16", "-f", "4", unsigned, aligned)
     run(a.tools / "apksigner", "sign", "--ks", a.keystore, "--ks-key-alias", "asi",

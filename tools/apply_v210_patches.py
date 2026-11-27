@@ -2,10 +2,9 @@
 """
 Idempotent smali patcher for Gboard Pro v2.1.0 (PixelBoard 1.3.6 upstream port).
 Applies:
-1. Candidate emoji placement on right slot in LatinFixedCountCandidatesHolderView.smali
-2. Safe keypress and drag haptic feedback hook in pny.smali and pig.smali
-3. Launcher icon visibility unlock in rxk.smali and ppd.smali
-4. minSdkVersion: 29 in apktool.yml (Android 10+ support)
+1. Safe keypress and drag haptic feedback hook in pny.smali and pig.smali
+2. Launcher icon visibility unlock in rxk.smali and ppd.smali
+3. minSdkVersion: 29 in apktool.yml (Android 10+ support)
 """
 import os
 import re
@@ -48,22 +47,7 @@ def replace_regex_in_method(path: Path, method_sig: str, pattern: str, repl: str
 def main():
     print("=== Applying Gboard Pro v2.1.0 smali patches ===")
 
-    # 1. LatinFixedCountCandidatesHolderView: candidate emoji reordering to right slot
-    holder_view = ROOT / "smali_classes2" / "com" / "google" / "android" / "apps" / "inputmethod" / "latin" / "keyboard" / "widget" / "LatinFixedCountCandidatesHolderView.smali"
-    replace_regex_in_method(
-        holder_view,
-        ".method public final D(Ljava/util/List;Ljava/util/ArrayList;)V",
-        r"(\.locals 26)",
-        r"""\1
-
-    invoke-static/range {p0 .. p1}, Lcom/akshaykadam/pixelboard/extension/emoji/GboardCandidateEmojiRuntime;->reorderCandidatesForStrip(Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;
-
-    move-result-object p1""",
-        "GboardCandidateEmojiRuntime;->reorderCandidatesForStrip",
-        "LatinFixedCountCandidatesHolderView.D emoji reorder hook",
-    )
-
-    # 2. Keypress haptic feedback: pny.smali
+    # 1. Keypress haptic feedback: pny.smali
     pny = ROOT / "smali_classes2" / "pny.smali"
     pny_txt = pny.read_text(encoding="utf-8")
     if "GboardKeyboardRuntime;->performHapticFeedback" in pny_txt:
@@ -78,7 +62,7 @@ def main():
         pny.write_text(new_txt, encoding="utf-8")
         print(f"[OK]   pny.smali performHapticFeedback ({count} calls replaced)")
 
-    # 3. Cursor drag haptic feedback: pig.smali
+    # 2. Cursor drag haptic feedback: pig.smali
     pig = ROOT / "smali_classes3" / "pig.smali"
     replace_regex_in_method(
         pig,
@@ -89,7 +73,7 @@ def main():
         "pig.smali cursor drag performHapticFeedback",
     )
 
-    # 4. Launcher icon unlock: rxk.smali (Environment)
+    # 3. Launcher icon unlock: rxk.smali (Environment)
     rxk = ROOT / "smali_classes2" / "rxk.smali"
     replace_regex_in_method(
         rxk,
@@ -104,7 +88,7 @@ def main():
         "rxk.t launcher icon configurable unlock",
     )
 
-    # 5. Launcher icon preference filter: ppd.smali
+    # 4. Launcher icon preference filter: ppd.smali
     ppd = ROOT / "smali_classes2" / "ppd.smali"
     replace_regex_in_method(
         ppd,
@@ -119,7 +103,7 @@ def main():
         "ppd.d launcher icon preference filter unlock",
     )
 
-    # 6. apktool.yml: minSdkVersion: 29
+    # 5. apktool.yml: minSdkVersion: 29
     apktool_yml = ROOT / "apktool.yml"
     yml_txt = apktool_yml.read_text(encoding="utf-8")
     if "minSdkVersion: '29'" in yml_txt or "minSdkVersion: 29" in yml_txt:
