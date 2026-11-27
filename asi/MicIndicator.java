@@ -18,13 +18,20 @@ public final class MicIndicator extends Drawable implements View.OnLayoutChangeL
     private static final Map<View, MicIndicator> keys = new WeakHashMap<>();
     private static boolean listening;
     private final WeakReference<Object> owner;
+    private static final float BUTTON_SCALE = 1.15f;
+    private final float baseScaleX;
+    private final float baseScaleY;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Rect iconBounds = new Rect();
     private boolean dark;
     private int alpha = 255;
 
-    private MicIndicator(Object model) {
+    private MicIndicator(Object model, View key) {
         owner = new WeakReference<>(model);
+        baseScaleX = key.getScaleX();
+        baseScaleY = key.getScaleY();
+        key.setScaleX(baseScaleX * BUTTON_SCALE);
+        key.setScaleY(baseScaleY * BUTTON_SCALE);
     }
 
     public static void bind(View key, Object model, String name, int action) {
@@ -38,11 +45,11 @@ public final class MicIndicator extends Drawable implements View.OnLayoutChangeL
                 if (listening) previous.position(key);
                 return;
             }
-            if (listening) previous.show(key, false);
+            previous.release(key);
             keys.remove(key);
         }
         if (microphone) {
-            MicIndicator badge = new MicIndicator(model);
+            MicIndicator badge = new MicIndicator(model, key);
             keys.put(key, badge);
             if (listening) badge.show(key, true);
         }
@@ -51,8 +58,25 @@ public final class MicIndicator extends Drawable implements View.OnLayoutChangeL
     public static void unbind(View key, Object model) {
         MicIndicator badge = keys.get(key);
         if (badge == null || badge.owner.get() != model) return;
-        if (listening) badge.show(key, false);
+        badge.release(key);
         keys.remove(key);
+    }
+
+    private void release(View key) {
+        if (listening) show(key, false);
+        if (key.getScaleX() == baseScaleX * BUTTON_SCALE) key.setScaleX(baseScaleX);
+        if (key.getScaleY() == baseScaleY * BUTTON_SCALE) key.setScaleY(baseScaleY);
+    }
+
+    static Iterable<View> boundKeys() {
+        return keys.keySet();
+    }
+
+    static boolean containsScreenPoint(View key, float x, float y, Rect bounds, int[] rootOrigin) {
+        if (!key.getGlobalVisibleRect(bounds)) return false;
+        key.getRootView().getLocationOnScreen(rootOrigin);
+        return bounds.contains((int) Math.floor(x - rootOrigin[0]),
+                (int) Math.floor(y - rootOrigin[1]));
     }
 
     static void setListening(boolean active) {

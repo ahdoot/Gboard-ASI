@@ -39,13 +39,22 @@ public final class WordStripTest {
 
         for (float slotWidth : new float[]{88, 144}) {
             float middle = slotWidth / 2 - 12;
-            require(AsiWordStrip.firstWordOffset(middle, 0, 24, slotWidth, 1, false) == middle - 8,
+            require(AsiWordStrip.firstWordOffset(middle, 0, 24, slotWidth, false) == 1,
                     "First label did not move toward the grid");
-            require(AsiWordStrip.firstWordOffset(middle, 0, 24, slotWidth, 1, true) == middle + 8,
+            require(AsiWordStrip.firstWordOffset(middle, 0, 24, slotWidth, true) == slotWidth - 25,
                     "RTL first label did not mirror");
-            require(AsiWordStrip.firstWordOffset(3, 0, slotWidth - 6, slotWidth, 1, false) == 1,
+            require(AsiWordStrip.firstWordOffset(3, 0, slotWidth - 6, slotWidth, false) == 1,
                     "Long word exceeded its slot");
         }
+        int[] folded = {144, 161, 149};
+        AsiWordStrip.fitWords(folded, new int[]{93, 155, 161}, 3, 90);
+        require(Arrays.equals(folded, new int[]{93, 155, 206}), "Short first word retained its empty space");
+        int[] longFirst = {120, 120, 120};
+        AsiWordStrip.fitWords(longFirst, new int[]{170, 55, 130}, 3, 80);
+        require(Arrays.equals(longFirst, new int[]{160, 80, 120}), "Long first word lost available width");
+        int[] narrow = {48, 48, 48};
+        AsiWordStrip.fitWords(narrow, new int[]{30, 30, 30}, 3, 60);
+        require(Arrays.equals(narrow, new int[]{48, 48, 48}), "Narrow targets shrank further");
         require(AsiWordStrip.blockedFlag("enable_fast_access_bar"), "Quick emoji bar enabled");
         require(!AsiWordStrip.blockedFlag("emoji_palette_v2"), "Manual emoji picker disabled");
         require(!AsiWordStrip.blockedFlag("enable_smart_compose"), "Word prediction disabled");
